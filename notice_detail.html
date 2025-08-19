@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>공지사항 상세 | HOBBY</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --primary:#E2B8AC; --primary-strong:#C79A8C;
+    --info:#98A7AC; --muted:#6b7280; --ink:#111; --line:#eceef2;
+    --muted-bg:#AAD9CD; --surface:#CDDAD8;
+    --rail: 920px;
+    --chip-h:44px; --chip-radius:10px; --chip-fs:13px; --chip-pad-x:10px;
+    --chip-col-w:160px; --chip-gap-x:6px; --chip-gap-y:6px;
+    /* footer vars */
+    --ft-line:#f0f0f0; --ft-ink:#555; --ft-muted:#888; --ft-card:#f8f8f8; --ft-maxw:1080px;
+  }
+  body{ font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic','Segoe UI',Roboto,Arial,sans-serif; color:var(--ink); background:#fff; }
+
+  .top-banner{ background:#f8f9fa; font-size:.9rem; border-bottom:1px solid #eee; }
+  .top-banner a{ color:#333; text-decoration:none; margin-left:15px; }
+
+  .navbar-brand{ font-weight:700; color:#111 !important; font-size:2rem; font-family:'Poppins',sans-serif; }
+  .divider{ width:1px; height:24px; background:#ddd; margin:0 12px; }
+  @media (min-width:992px){ .bar-lg{display:flex!important} .bar-sm{display:none!important} }
+  @media (max-width:991.98px){ .bar-lg{display:none!important} .bar-sm{display:flex!important} }
+  .search-wrap{ position:relative; flex:1; max-width:480px; }
+  .search-bar{ width:100%; border-radius:50px; }
+  .search-bar:focus{ border-color:#ced4da !important; box-shadow:none !important; outline:none !important; }
+  .icon-row{ display:flex; align-items:center; gap:16px; }
+  .nav-icon{ position:relative; margin:0 6px; cursor:pointer; }
+  .nav-icon span{ position:absolute; bottom:-22px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:2px 6px; border-radius:4px; font-size:12px; white-space:nowrap; opacity:0; transition:opacity .15s; }
+  .nav-icon:hover span{ opacity:1; }
+
+  /* Category mega-panel — match previous detail page */
+  .category-trigger, .category-trigger-sm{ position:relative; }
+  .mega-panel{
+    position:absolute; top:100%; left:50%; transform:translateX(-50%);
+    width:auto; max-width:calc(100vw - 32px);
+    margin-top:10px; padding:10px;
+    background:#fff; border:1px solid #e5e7eb; border-radius:14px;
+    box-shadow:0 16px 36px rgba(0,0,0,.08);
+    display:none; z-index:2000;
+  }
+  .mega-panel.mobile{
+    position:absolute; top:calc(100% + 8px); left:0; transform:none; margin-top:0;
+    width:max(260px, min(640px, 92vw)); max-width:92vw; padding:10px;
+  }
+  .mega-grid{
+    display:grid; grid-template-columns:repeat(3, var(--chip-col-w));
+    gap:var(--chip-gap-y) var(--chip-gap-x); justify-content:center;
+  }
+  .cat-chip{
+    height:var(--chip-h); border:1px solid #dfe3e7; background:#fff;
+    border-radius:var(--chip-radius); display:flex; align-items:center; gap:8px;
+    padding:0 var(--chip-pad-x); width:100%; box-sizing:border-box; cursor:pointer;
+    transition:background-color .12s, border-color .12s; justify-content:center; color:#4b5563;
+  }
+  .cat-chip:hover{ background: color-mix(in srgb, var(--muted-bg) 22%, white); border-color:#d4d8dd; }
+  .chip-badge{ width:22px; height:22px; border-radius:8px; display:grid; place-items:center; font-size:14px; background:#f6f7f8; border:1px solid #eceff2; color:#374151; }
+  .cat-title{ font-size:13px; font-weight:500; letter-spacing:-.2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1; }
+
+  /* Search overlay */
+  .search-overlay{ position:absolute; left:0; right:0; top:calc(100% + 8px); background:#fff; border:1px solid #eceef2; border-radius:12px; padding:12px; z-index:2050; display:none; box-shadow:0 8px 24px rgba(0,0,0,.08); }
+  .search-overlay[aria-hidden="false"]{ display:block; }
+  .so-title{ font-weight:600; font-size:.95rem; color:#374151; margin-bottom:6px; }
+  .so-chips{ display:flex; flex-wrap:wrap; gap:8px; }
+  .so-chip{ display:inline-flex; align-items:center; gap:6px; padding:6px 10px; background:#fff; border:1px solid #e5e7eb; border-radius:999px; font-size:.92rem; color:#374151; cursor:pointer; transition:background .12s, border-color .12s; }
+  .so-chip:hover{ background: color-mix(in srgb, var(--muted-bg) 35%, white); border-color:#d7dde3; }
+  .so-chip .del{ display:inline-grid; place-items:center; width:18px; height:18px; border-radius:50%; border:1px solid #e5e7eb; font-size:12px; line-height:1; background:#fff; cursor:pointer; }
+  .so-chip .del:hover{ background:#fafafa; }
+
+  /* Rail wrapper */
+  .rail{ width: min(100% - 32px, var(--rail)); margin: 0 auto; }
+  #detailViewport{ width:100%; margin:0 auto; }
+  /* 헤더도 동일 규칙 */
+  #headerViewport{ width:100%; margin:0 auto; }
+
+  .page-header{ padding:20px 0 8px; border-bottom:1px solid rgba(0,0,0,.04); }
+  .page-title{ font-size:1.5rem; font-weight:700; letter-spacing:-.2px; }
+  .breadcrumb .breadcrumb-item > a{ color: var(--info); text-decoration:none; }
+  .breadcrumb .breadcrumb-item > a:hover{ text-decoration:underline; }
+  .breadcrumb .breadcrumb-item.active{ color: var(--primary-strong); font-weight:700; }
+
+  .title{ margin:12px 0 6px; font-weight:800; font-size:1.5rem; letter-spacing:-.2px; }
+
+  /* 메타 한 줄 */
+  .detail-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .meta-wrap{ display:flex; align-items:center; gap:12px; min-width:0; }
+  .avatar{ width:42px; height:42px; border-radius:50%; overflow:hidden; background:#f2f3f5; flex:0 0 42px; }
+  .avatar img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .meta{ color:var(--muted); font-size:.92rem; white-space:nowrap; }
+
+  .detail-body{ margin-top:14px; font-size:1rem; line-height:1.7; color:#374151; white-space:pre-line; }
+
+  .detail-foot{ display:flex; gap:8px; justify-content:flex-end; margin-top:10px; }
+  .detail-foot .btn{ border-radius:10px; }
+
+  /* 첨부파일 */
+  .attach-wrap{ border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#fff; margin-top:16px; }
+  .attach-head{ background:#fafafa; padding:10px 12px; font-weight:600; color:#374151; font-size:.95rem; }
+  .attach-list{ list-style:none; margin:0; padding:0; }
+  .attach-item{ display:flex; align-items:center; gap:10px; padding:12px; border-top:1px solid #f1f2f6; font-size:.95rem; }
+  .attach-name{ flex:1 1 auto; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .attach-size{ color:#6b7280; font-size:.9rem; margin-left:6px; }
+  .attach-actions .btn{ border-radius:8px; }
+
+  /* Toast (공지에서는 사용 안 함, 안전하게 숨김) */
+  .toast-lite{ display:none; }
+
+  /* ====== Footer (회색 박스) ====== */
+  .footer-wrap{ background:#fff; margin-top:18px; }
+  .footer-viewport{ width:100%; }
+  .footer-box{
+    margin:24px 0 40px;
+    background:var(--ft-card);
+    border:1px solid var(--ft-line);
+    border-radius:12px;
+    padding:20px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:16px;
+    max-width:100%;
+    margin-left:auto; margin-right:auto;
+    color:var(--ft-ink);
+  }
+  .footer-box .ft-title{
+    font-weight:600;
+    margin-bottom:6px;
+    display:flex;align-items:center;gap:6px;
+    color:#444;
+    font-size:15px;
+    text-transform:lowercase;
+  }
+  .footer-box a{
+    display:block;
+    color:var(--ft-muted);
+    text-decoration:none;
+    margin:4px 0;
+    font-size:14px;
+    transition:color 0.2s ease;
+  }
+  .footer-box a:hover{ color:#555; text-decoration:underline; }
+
+  /* desktop: hide mini banner (navbar에 통합) */
+  @media (min-width:992px){ .top-banner{ display:none !important; } }
+
+  /* desktop auth-links (회원가입/로그인/공지사항) */
+  .auth-links{ gap:4px; }
+  .auth-links .auth-link{ text-decoration:none; font-size:.95rem; color:#374151; padding:0 6px; }
+  .auth-links .auth-link:hover{ text-decoration:underline; }
+  .auth-links .auth-div{ color:#c9ccd2; }
+</style>
+
+</head>
+<body data-type="notice" data-post-id="201" data-slug="서비스-공지">
+  <div class="top-banner text-end py-1 px-3">
+    <a href="/accounts/signup/">회원가입</a><a href="/accounts/login/">로그인</a><a href="/community/?tab=notice">공지사항</a>
+  </div>
+
+  <!-- Desktop header (이전과 동일) -->
+  <nav class="navbar bg-white border-bottom sticky-top bar-lg">
+    <div class="container d-flex justify-content-center">
+      <div class="d-flex align-items-center justify-content-center gap-3 w-100 flex-wrap">
+        <div class="category-trigger">
+          <button id="btnCatDesk" class="btn btn-link text-dark fs-4" data-bs-toggle="tooltip" data-bs-placement="bottom" title="카테고리" aria-expanded="false">
+            <i class="bi bi-grid"></i>
+          </button>
+          <div id="panelDesk" class="mega-panel" role="menu" aria-label="카테고리">
+            <div id="gridDesk" class="mega-grid"></div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <a class="navbar-brand" href="/">HOBBY</a>
+
+        <form class="d-flex search-wrap" autocomplete="off">
+          <input type="text" style="position:absolute; left:-9999px; top:-9999px; height:0; width:0; opacity:0;" aria-hidden="true" tabindex="-1">
+          <input id="globalSearch" class="form-control search-bar" type="search" placeholder="지금 생각나는 취미를 검색하세요" aria-label="Search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+          <div id="searchOverlay" class="search-overlay shadow-sm" role="dialog" aria-hidden="true">
+            <div class="so-title">인기 검색어</div>
+            <div class="so-chips" id="popularChips"></div>
+            <div class="so-title mt-2 d-flex align-items-center">최근 검색어 <button class="btn btn-sm btn-link p-0 ms-auto" type="button" id="clearRecent">전체삭제</button></div>
+            <div class="so-chips" id="recentChips"></div>
+          </div>
+        </form>
+
+        <div class="icon-row">
+  <div class="nav-icon"><i class="bi bi-people fs-4"></i><span>크루</span></div>
+  <div class="nav-icon"><i class="bi bi-bell fs-4"></i><span>알림</span></div>
+  <div class="nav-icon"><i class="bi bi-heart fs-4"></i><span>찜</span></div>
+  <div class="nav-icon"><i class="bi bi-person fs-4"></i><span>마이</span></div>
+  <div class="auth-links d-none d-lg-flex align-items-center ms-2">
+    <a class="auth-link" href="/accounts/signup/">회원가입</a>
+    <span class="auth-div">|</span>
+    <a class="auth-link" href="/accounts/login/">로그인</a>
+    <span class="auth-div">|</span>
+    <a class="auth-link" href="/community/?tab=notice">공지사항</a>
+  </div>
+</div></div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile header (이전과 동일) -->
+  <nav class="navbar bg-white border-bottom sticky-top bar-sm w-100">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
+        <div class="category-trigger-sm">
+          <button id="btnCatM" class="btn btn-link text-dark fs-4 me-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="카테고리" aria-expanded="false">
+            <i class="bi bi-grid"></i>
+          </button>
+          <div id="panelM" class="mega-panel mobile" role="menu" aria-label="카테고리 (모바일)">
+            <div id="gridM" class="mega-grid"></div>
+          </div>
+        </div>
+        <a class="navbar-brand ms-1" href="/">HOBBY</a>
+      </div>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenuSm">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+    <div class="collapse navbar-collapse bg-white" id="navMenuSm">
+      <div class="p-3 border-bottom">
+        <form class="input-group" autocomplete="off">
+          <input type="text" style="position:absolute; left:-9999px; top:-9999px; height:0; width:0; opacity:0;" aria-hidden="true" tabindex="-1">
+          <input id="globalSearchSm" type="search" class="form-control" placeholder="취미 검색…" aria-label="Search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+          <button class="btn btn-outline-secondary" type="button"><i class="bi bi-search"></i></button>
+        </form>
+      </div>
+      <ul class="navbar-nav p-2 gap-1">
+        <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-people me-2"></i>크루</a></li>
+        <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-bell me-2"></i>알림</a></li>
+        <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-heart me-2"></i>찜</a></li>
+        <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-person me-2"></i>마이</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Page header (아이콘 끝~끝 폭 동기화) -->
+  <header class="page-header">
+    <div class="container">
+      <div id="headerViewport">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="page-title">커뮤니티</div>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item"><a href="/">Home</a></li>
+              <li class="breadcrumb-item"><a href="/community/?tab=notice">커뮤니티</a></li>
+              <li class="breadcrumb-item active" aria-current="page">공지사항</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="py-3">
+    <div class="container">
+      <!-- 내용도 같은 폭으로 -->
+      <div id="detailViewport">
+        <section>
+          <h1 class="title">[공지] 8월 서버 점검 안내</h1>
+
+          <!-- 메타: 작성자 / 시간 / 조회수 -->
+          <div class="detail-head mb-2">
+            <div class="meta-wrap">
+              <span class="avatar"><img src="https://i.pravatar.cc/80?img=1" alt="운영자"></span>
+              <div class="meta">운영자 · 2025-08-18 10:00 · 조회 1,024</div>
+            </div>
+          </div>
+
+          <!-- 본문 (이미지/칩/댓글/공유/추천 없음) -->
+          <div id="detailBody" class="detail-body">
+안녕하세요. HOBBY 운영팀입니다.
+
+보다 안정적인 서비스 제공을 위해 아래 시간 동안 시스템 점검이 진행됩니다.
+
+- 점검 일시: 2025-08-20(수) 02:00 ~ 04:00
+- 점검 영향: 점검 시간 내 서비스 접속 및 일부 기능 이용 불가
+
+이용에 불편을 드려 죄송합니다. 감사합니다.
+          </div>
+
+          <!-- 목록만 유지 -->
+          <div class="detail-foot">
+            <a class="btn btn-outline-secondary" href="/community/?tab=notice">목록</a>
+          </div>
+
+          <!-- 첨부파일 (있을 때만 표시) -->
+          <section id="attachSection" class="attach-wrap" aria-label="첨부파일" style="display:none">
+            <div class="attach-head"><i class="bi bi-paperclip me-1"></i> 첨부파일</div>
+            <ul id="attachList" class="attach-list"></ul>
+          </section>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== 푸터(회색 박스) 추가 ===== -->
+  <section class="footer-wrap">
+    <div class="container">
+      <div id="ftViewport" class="footer-viewport mx-auto">
+        <footer class="footer-box" role="contentinfo">
+          <div>
+            <div class="ft-title">help</div>
+            <a href="#">FAQ</a>
+            <a href="#">Contact</a>
+          </div>
+
+          <div>
+            <div class="ft-title">news</div>
+            <a href="#">Notice</a>
+            <a href="#">Update</a>
+          </div>
+
+          <div>
+            <div class="ft-title">instagram</div>
+            <a href="https://instagram.com/yourbrand" target="_blank" rel="noopener">@yourbrand</a>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </section>
+
+  <!-- Toast (공지에서는 사용하지 않음) -->
+  <div id="copyToast" class="toast-lite" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(() => {
+  /* ===== Tooltip ===== */
+  const tooltips=[];
+  document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el=>{
+    tooltips.push(new bootstrap.Tooltip(el,{placement:'bottom',fallbackPlacements:[]}));
+  });
+  const tooltipDisposeOn = el => bootstrap.Tooltip.getInstance(el)?.dispose();
+  const tooltipEnableOn  = el => { if(!bootstrap.Tooltip.getInstance(el)) new bootstrap.Tooltip(el,{placement:'bottom',fallbackPlacements:[]}); };
+
+  /* Categories chips render (네비 동일) */
+  const categories=[
+    {title:'아웃도어',emoji:'🏕️'},{title:'피트니스',emoji:'🧘'},{title:'뷰티',emoji:'💄'},{title:'공예·DIY',emoji:'🧶'},
+    {title:'스포츠',emoji:'⚽'},{title:'베이킹',emoji:'🍞'},{title:'문화예술',emoji:'🎨'},{title:'자기계발',emoji:'📚'},
+    {title:'심리·상담',emoji:'☕'},{title:'수상레포츠',emoji:'🏊'},{title:'요리',emoji:'🍳'},{title:'여행',emoji:'✈️'}
+  ];
+  const gridDesk=document.getElementById('gridDesk');
+  const gridM=document.getElementById('gridM');
+  function renderChips(container){
+    if(!container) return;
+    container.innerHTML = categories.map(c=>(
+      '<button type="button" class="cat-chip" data-title="'+c.title+'">'+
+        '<div class="chip-badge">'+c.emoji+'</div>'+
+        '<div class="cat-title">'+c.title+'</div>'+
+      '</button>'
+    )).join('');
+  }
+  renderChips(gridDesk); renderChips(gridM);
+
+  /* Chip column unified width */
+  function setUnifiedChipWidth(scope=document){
+    const chips=[...scope.querySelectorAll('.cat-chip')]; if(!chips.length) return;
+    chips.forEach(ch=>ch.style.width='auto');
+    const maxW=Math.ceil(Math.max(...chips.map(ch=>ch.scrollWidth)));
+    const clamped=Math.min(Math.max(maxW,120),200);
+    document.documentElement.style.setProperty('--chip-col-w',clamped+'px');
+    chips.forEach(ch=>ch.style.width='100%');
+  }
+  setUnifiedChipWidth(document);
+  if(document.fonts?.ready) document.fonts.ready.then(()=>setUnifiedChipWidth(document));
+  addEventListener('resize', ()=>setUnifiedChipWidth(document));
+
+  /* Desktop categories panel open/close + keep on screen */
+  const btnCatDesk=document.getElementById('btnCatDesk');
+  const panelDesk=document.getElementById('panelDesk');
+  function keepPanelOnScreen(panel){
+    panel.style.left='50%'; panel.style.right=''; panel.style.transform='translateX(-50%)';
+    const prev=panel.style.display; panel.style.display='block';
+    const rect=panel.getBoundingClientRect(); const vw=innerWidth; const m=16;
+    if(rect.left<m){ panel.style.left=m+'px'; panel.style.right=''; panel.style.transform='none'; }
+    else if(rect.right>vw-m){ panel.style.left=''; panel.style.right=m+'px'; panel.style.transform='none'; }
+    panel.style.display=prev||'block';
+  }
+  btnCatDesk?.addEventListener('click',e=>{
+    e.preventDefault();
+    const open=panelDesk.style.display==='block';
+    if(!open){ panelDesk.style.display='block'; keepPanelOnScreen(panelDesk); tooltipDisposeOn(btnCatDesk); }
+    else{ panelDesk.style.display='none'; tooltipEnableOn(btnCatDesk); }
+    btnCatDesk.setAttribute('aria-expanded', String(!open));
+  });
+  document.addEventListener('click',e=>{
+    if(panelDesk && panelDesk.style.display==='block'&&!panelDesk.contains(e.target)&&!btnCatDesk.contains(e.target)){
+      panelDesk.style.display='none'; btnCatDesk.setAttribute('aria-expanded','false'); tooltipEnableOn(btnCatDesk);
+    }
+  });
+
+  /* Mobile categories panel */
+  const btnCatM=document.getElementById('btnCatM');
+  const panelM=document.getElementById('panelM');
+  function openMobilePanel(){ if(!panelM) return; panelM.style.display='block'; btnCatM?.setAttribute('aria-expanded','true'); setUnifiedChipWidth(panelM); tooltipDisposeOn(btnCatM); }
+  function closeMobilePanel(){ if(!panelM) return; panelM.style.display='none'; btnCatM?.setAttribute('aria-expanded','false'); tooltipEnableOn(btnCatM); }
+  function panelMHidden(){ return !panelM || panelM.style.display!=='block'; }
+  btnCatM?.addEventListener('click',e=>{ e.preventDefault(); panelMHidden()?openMobilePanel():closeMobilePanel(); });
+  document.addEventListener('click',e=>{
+    if(!panelM) return;
+    const isInside=panelM.contains(e.target)||btnCatM?.contains(e.target);
+    if(!isInside&&!panelMHidden()) closeMobilePanel();
+  });
+
+  /* Search overlay */
+  (function(){
+    const input = document.getElementById('globalSearch');
+    const overlay = document.getElementById('searchOverlay');
+    const popularEl = document.getElementById('popularChips');
+    const recentEl = document.getElementById('recentChips');
+    const clearRecentBtn = document.getElementById('clearRecent');
+    if(!input || !overlay) return;
+
+    function suppressBrowserSuggestions(el){
+      el.setAttribute('autocomplete','off');
+      el.setAttribute('readonly','readonly');
+      setTimeout(()=>{ el.removeAttribute('readonly'); }, 50);
+    }
+
+    const popular = ['하이킹','보드게임','드로잉','와인클래스','홈쿠킹','사진산책','러닝'];
+    const LS_KEY = 'hobby_recent_keywords';
+
+    const getRecent = () => { try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch { return []; } };
+    const setRecent = (arr) => localStorage.setItem(LS_KEY, JSON.stringify(arr.slice(0,12)));
+
+    function renderChips(list, container, {deletable=false}={}){
+      container.innerHTML = '';
+      list.forEach((word, idx)=>{
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'so-chip';
+        chip.setAttribute('data-word', word);
+        chip.innerHTML = `<span class="txt">${word}</span>` + (deletable? `<span class="del" data-index="${idx}" aria-label="삭제">×</span>`:'');
+        container.appendChild(chip);
+      });
+    }
+
+    function openOverlay(){
+      overlay.setAttribute('aria-hidden','false');
+      const wrap = input.closest('.search-wrap') || input.parentElement;
+      if (wrap) {
+        const rect = wrap.getBoundingClientRect();
+        overlay.style.width = rect.width + 'px';
+      }
+    }
+    function closeOverlay(){
+      overlay.setAttribute('aria-hidden','true');
+      overlay.querySelectorAll('.kb-focus').forEach(el=>el.classList.remove('kb-focus'));
+    }
+
+    renderChips(popular, popularEl, {deletable:false});
+    renderChips(getRecent(), recentEl, {deletable:true});
+
+    input.addEventListener('focus', ()=>{ suppressBrowserSuggestions(input); openOverlay(); });
+    input.addEventListener('input', openOverlay);
+    document.addEventListener('click', (e)=>{ if(!(overlay.contains(e.target)||input.contains(e.target))) closeOverlay(); });
+
+    document.addEventListener('click', (e)=>{
+      const chip = e.target.closest('.so-chip');
+      if(!chip) return;
+      const word = chip.dataset.word;
+      if(e.target.closest('.del')){
+        const idx = +e.target.dataset.index;
+        const arr = getRecent(); arr.splice(idx,1); setRecent(arr);
+        renderChips(getRecent(), recentEl, {deletable:true});
+        return;
+      }
+      const arr = getRecent().filter(w=>w!==word);
+      arr.unshift(word); setRecent(arr);
+      renderChips(getRecent(), recentEl, {deletable:true});
+      location.href = `/community/?tab=board&q=${encodeURIComponent(word)}`;
+    });
+
+    clearRecentBtn?.addEventListener('click', ()=>{
+      localStorage.removeItem(LS_KEY);
+      renderChips([], recentEl, {deletable:true});
+    });
+  })();
+
+  /* ====== 폭 동기화: 헤더 + 본문 + 푸터 ====== */
+  function navSpanWidth(){
+    const catWrap  = document.querySelector('.bar-lg .category-trigger');
+    const iconRow  = document.querySelector('.bar-lg .icon-row');
+    if(!catWrap || !iconRow) return null;
+    const leftEdge = catWrap.getBoundingClientRect().left;
+    const rightEdge= iconRow.getBoundingClientRect().right;
+    return Math.max(0, rightEdge - leftEdge);
+  }
+  function applySpanWidthTo(idList){
+    const span = navSpanWidth();
+    idList.forEach(id=>{
+      const el=document.getElementById(id);
+      if(!el) return;
+      if (window.innerWidth >= 992 && span!=null){
+        el.style.width = span + 'px';
+        el.style.marginLeft = 'auto';
+        el.style.marginRight = 'auto';
+      }else{
+        el.style.width = '';
+        el.style.marginLeft = '';
+        el.style.marginRight = '';
+      }
+    });
+  }
+  function syncAll(){
+    applySpanWidthTo(['headerViewport','detailViewport','ftViewport']);
+  }
+  window.addEventListener('load', syncAll);
+  window.addEventListener('resize', syncAll);
+  if(document.fonts?.ready) document.fonts.ready.then(syncAll);
+
+  /* ===== 첨부파일 렌더 (비어 있으면 섹션 숨김) =====
+     실제 서비스에서는 서버 데이터로 교체하세요. */
+  const attachments = [
+    // 첨부 없애려면 빈 배열 []
+    { name:'점검_안내문.pdf', size:'1.2MB', url:'/media/notice/점검_안내문.pdf' },
+    { name:'서비스_점검_스케줄.xlsx', size:'184KB', url:'/media/notice/서비스_점검_스케줄.xlsx' }
+  ];
+  const attachSection = document.getElementById('attachSection');
+  const attachList = document.getElementById('attachList');
+  if (attachments.length){
+    attachSection.style.display = '';
+    attachList.innerHTML = attachments.map(f=>(
+      `<li class="attach-item">
+         <i class="bi bi-paperclip"></i>
+         <span class="attach-name" title="${f.name}">${f.name}</span>
+         <span class="attach-size">${f.size}</span>
+         <span class="attach-actions ms-auto">
+           <a class="btn btn-outline-secondary btn-sm" href="${f.url}" download>
+             <i class="bi bi-download"></i> 다운로드
+           </a>
+         </span>
+       </li>`
+    )).join('');
+  }else{
+    attachSection.style.display = 'none';
+  }
+})();
+</script>
+
+
+<script>
+/* nd-align-footer-only */
+(function(){
+  function ndAlignFooter(){
+    var ft = document.getElementById('ftViewport');
+    if(!ft){ return; }
+    var desktop = window.innerWidth >= 992;
+    if(!desktop){
+      ft.style.width=''; ft.style.marginLeft=''; return;
+    }
+    var cat = document.querySelector('.bar-lg .category-trigger');
+    var icons = document.querySelector('.bar-lg .icon-row');
+    var container = ft.closest('.container');
+    if(!(cat && icons && container)){
+      ft.style.width=''; ft.style.marginLeft=''; return;
+    }
+    var left = cat.getBoundingClientRect().left;
+    var right= icons.getBoundingClientRect().right;
+    var span = Math.max(0, right - left);
+    var crect= container.getBoundingClientRect();
+    var ml = Math.max(0, left - crect.left);
+    ft.style.width = span + 'px';
+    ft.style.marginLeft = ml + 'px';
+    ft.style.marginRight = '';
+  }
+  window.addEventListener('load', ndAlignFooter);
+  window.addEventListener('resize', ndAlignFooter);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(ndAlignFooter);
+  window.ndAlignFooter = ndAlignFooter;
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>마이페이지 | HOBBY</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+<style>
+  /* ===== 공통 변수 (커뮤니티와 동일) ===== */
+  :root{
+    --chip-h: 44px; --chip-pad-x: 10px; --chip-radius: 10px;
+    --chip-fs: 13px; --chip-weight: 500;
+    --chip-border: #dfe3e7; --chip-border-hover:#d4d8dd;
+    --chip-bg:#fff; --chip-bg-hover:#fafafa;
+    --badge-size: 22px; --badge-fs: 14px;
+    --chip-col-w: 160px; --chip-gap-x: 6px; --chip-gap-y: 6px;
+    
+    --primary:  #E2B8AC;   /* dusty rose */
+    --primary-strong:#C79A8C; /* 더 진한 파스텔 */
+    --accent:   #919F89;   /* sage */
+    --info:     #98A7AC;   /* blue gray */
+    --surface:  #CDDAD8;   /* soft mix */
+    --muted-bg: #AAD9CD;   /* mint hover */
+
+    --ft-line:#f0f0f0; --ft-ink:#555; --ft-muted:#888; --ft-card:#f8f8f8;
+    --section-y: 1.5rem;
+  }
+
+  /* ===== 기본 ===== */
+  body{
+    font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic','Segoe UI',Roboto,Arial,sans-serif;
+    background:#fff; color:#111;
+  }
+  .top-banner{ background:#f8f9fa; font-size:.9rem; border-bottom:1px solid #eee; }
+  .top-banner a{ color:#333; text-decoration:none; margin-left:15px; }
+
+  .navbar-brand{
+    font-weight:700; color:#111 !important; font-size:2rem; font-family:'Poppins', sans-serif;
+  }
+  .divider{ width:1px; height:24px; background:#ddd; margin:0 12px; }
+
+  /* ===== 데스크톱/모바일 헤더 가시성 ===== */
+  @media (min-width:992px){ .bar-lg{display:flex!important} .bar-sm{display:none!important} }
+  @media (max-width:991.98px){ .bar-lg{display:none!important} .bar-sm{display:flex!important} }
+
+  .search-wrap{ position:relative; flex:1; max-width:480px; }
+  .search-bar{ width:100%; border-radius:50px; }
+  .search-bar:focus{ box-shadow:none; border-color:#e0e0e0; }
+  .icon-row{ display:flex; align-items:center; gap:16px; }
+  .nav-icon{ position:relative; margin:0 6px; cursor:pointer; }
+  .nav-icon span{
+    position:absolute; bottom:-22px; left:50%; transform:translateX(-50%);
+    background:#333; color:#fff; padding:2px 6px; border-radius:4px; font-size:12px;
+    white-space:nowrap; opacity:0; transition:opacity .15s;
+  }
+  .nav-icon:hover span{ opacity:1; }
+
+  .category-trigger, .category-trigger-sm{ position:relative; }
+  .mega-panel{
+    position:absolute; top:100%; left:50%; transform:translateX(-50%);
+    width:auto; max-width:calc(100vw - 32px);
+    margin-top:10px; padding:10px;
+    background:#fff; border:1px solid #e5e7eb; border-radius:14px;
+    box-shadow:0 16px 36px rgba(0,0,0,.08);
+    display:none; z-index:2000;
+  }
+  .mega-panel.mobile{
+    position:absolute; top:calc(100% + 8px); left:0; transform:none; margin-top:0;
+    width:max(260px, min(640px, 92vw)); max-width:92vw; padding:10px;
+  }
+  .mega-grid{
+    display:grid; grid-template-columns:repeat(3, var(--chip-col-w));
+    gap:var(--chip-gap-y) var(--chip-gap-x); justify-content:center;
+  }
+  .cat-chip{
+    --chip-h:44px; --chip-pad-x:10px; --chip-radius:10px; --chip-fs:13px; --chip-weight:500;
+    --chip-border:#dfe3e7; --chip-border-hover:#d4d8dd;
+    height:var(--chip-h); border:1px solid var(--chip-border); background:#fff;
+    border-radius:var(--chip-radius); display:flex; align-items:center; gap:8px;
+    padding:0 var(--chip-pad-x); width:100%; box-sizing:border-box; cursor:pointer;
+    transition:background-color .12s, border-color .12s; justify-content:center;
+  }
+  .cat-chip:hover{ background: color-mix(in srgb, var(--muted-bg) 22%, white); border-color: var(--chip-border-hover); }
+  .chip-badge, .cat-title{
+    font-family: inherit, 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji';
+  }
+  .chip-badge{ width:22px; height:22px; border-radius:8px; display:grid; place-items:center; font-size:14px; background:#f6f7f8; border:1px solid #eceff2; color:#374151; flex:0 0 auto; }
+  .cat-title{ font-size:var(--chip-fs); font-weight:var(--chip-weight); color:#4b5563; letter-spacing:-.2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1; }
+
+  /* ===== 검색 오버레이 ===== */
+  .search-overlay{
+    position:absolute; left:0; right:0; top:calc(100% + 8px);
+    background:#fff; border:1px solid #eceef2; border-radius:12px;
+    padding:12px; z-index:2050; display:none;
+    box-shadow:0 8px 24px rgba(0,0,0,.08);
+  }
+  .search-overlay[aria-hidden="false"]{ display:block; }
+  .so-section + .so-section{ margin-top:10px; }
+  .so-title{ font-weight:600; font-size:.95rem; color:#374151; margin-bottom:6px; }
+  .so-row{ display:flex; align-items:center; gap:8px; }
+  .so-chips{ display:flex; flex-wrap:wrap; gap:8px; }
+  .so-chip{
+    display:inline-flex; align-items:center; gap:6px;
+    padding:6px 10px; background:#fff; border:1px solid #e5e7eb;
+    border-radius:999px; font-size:.92rem; color:#374151; cursor:pointer;
+    transition:background .12s, border-color .12s;
+  }
+  .so-chip:hover{ background: color-mix(in srgb, var(--muted-bg) 35%, white); border-color:#d7dde3; }
+  .so-chip.kb-focus{ outline:2px solid #98A7AC; outline-offset:2px; }
+
+  /* ===== 페이지 헤더 & 브레드크럼 ===== */
+  .page-header{ padding:20px 0 8px; border-bottom:1px solid rgba(0,0,0,.04); }
+  .page-title{ font-size:1.5rem; font-weight:700; letter-spacing:-.2px; }
+  .breadcrumb .breadcrumb-item > a{ color: var(--info); text-decoration:none; }
+  .breadcrumb .breadcrumb-item > a:hover{ text-decoration:underline; }
+  .breadcrumb .breadcrumb-item.active{ color: var(--primary-strong); font-weight:700; }
+
+  /* ===== 탭 ===== */
+  .tabs-wrap{ position:sticky; top:0; z-index:50; background:#fff; border-bottom:1px solid #eceef2; }
+  .tabs-inner{ display:flex; align-items:center; gap:8px; flex-wrap:nowrap !important; padding-bottom:4px; width:100%; }
+  .tab-group{ display:flex; align-items:center; gap:8px; flex-wrap:nowrap; min-width:0; overflow-x:auto; flex:1 1 auto; }
+  .tab-group::-webkit-scrollbar{ height:6px; }
+  .tab-group::-webkit-scrollbar-thumb{ background:#e0e0e0; border-radius:3px; }
+  .tab-btn{
+    border:0; background:#fff; color:#374151;
+    border-radius:10px; padding:8px 14px; font-size:.98rem; line-height:1; flex:0 0 auto;
+  }
+  .tab-btn:hover{ background: color-mix(in srgb, var(--surface) 30%, white); }
+  .tab-btn.active{
+    color:var(--primary-strong);
+    background: color-mix(in srgb, var(--surface) 55%, white);
+    font-weight:700;
+  }
+  .btn-logout-tab{ border-color:#dc3545; color:#dc3545; flex:0 0 auto; margin-left:auto; white-space:nowrap; }
+  .btn-logout-tab:hover{ background:#dc3545; color:#fff; }
+
+  /* ===== 마이페이지 전용 ===== */
+  .profile-card{
+    border:1px solid #eceef2; border-radius:14px; background:#fff; overflow:hidden;
+  }
+  .profile-head{
+    display:flex; gap:16px; align-items:center; padding:16px; border-bottom:1px solid #f1f2f6;
+  }
+  .profile-avatar{
+    width:96px; height:96px; border-radius:50%; overflow:hidden; background:#f0f2f4; flex:0 0 96px;
+  }
+  .profile-avatar img{ width:100%; height:100%; object-fit:cover; object-position:center; display:block; }
+  .profile-body{ padding:16px; }
+  .kv{ display:grid; grid-template-columns:120px 1fr; gap:10px 14px; align-items:center; font-size:1.02rem; }
+  .kv .k{ color:#6b7280; }
+  .kv .v{ color:#111; font-weight:600; }
+  @media (max-width: 576.98px){
+    .kv{ grid-template-columns:1fr; }
+    .kv .k{ font-weight:600; color:#374151; }
+    .kv .v{ font-weight:500; }
+  }
+  .btn-wrap{ display:flex; gap:8px; margin-left:auto; }
+  .muted{ color:#6b7280; }
+
+  /* 내 모임 (동일 높이 유지) */
+  .crew-card{
+    border:1px solid #eceef2; border-radius:12px; background:#fff; overflow:hidden; display:flex; gap:14px; padding:16px; height:100%;
+  }
+  .crew-thumb{ flex:0 0 128px; height:auto; border-radius:10px; overflow:hidden; background:#f0f2f4; }
+  .crew-thumb img{ width:128px; height:100%; object-fit:cover; display:block; }
+  .crew-title{ font-weight:800; margin:0; font-size:1.12rem; }
+  .crew-meta{ font-size:1rem; color:#6b7280; }
+
+  /* 내 활동 – 서브탭 */
+  .subtabs{ display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+  .subtab-btn{
+    border:1px solid #e5e7eb; background:#fff; color:#374151;
+    border-radius:10px; padding:8px 14px; font-size:1rem; line-height:1;
+  }
+  .subtab-btn.active{ 
+    color:#2b5d52; 
+    border-color:#b7d7cf; 
+    background:#e7f3f0;
+    font-weight:700; 
+  }
+  .panel-hidden{ display:none !important; }
+
+  /* ===== 활동 피드 (후기 스타일) ===== */
+  .feed-grid{ display:grid; gap:16px; grid-template-columns:repeat(1,1fr); }
+  @media (min-width: 768px){ .feed-grid{ grid-template-columns:repeat(2,1fr); } }
+  .feed-card{
+    border:1px solid #eceef2; border-radius:14px; overflow:hidden; background:#fff;
+    transition:transform .12s ease, box-shadow .12s ease;
+    display:flex; flex-direction:column; position:relative;
+  }
+  .feed-card:hover{ transform:translateY(-2px); box-shadow:0 8px 20px rgba(0,0,0,.05); }
+  .feed-head{
+    display:flex; align-items:center; gap:10px;
+    padding:12px 12px 0 12px;
+  }
+  .avatar{ width:36px; height:36px; border-radius:50%; overflow:hidden; flex:0 0 36px; background:#f2f3f5; display:block; }
+  .avatar img{ width:100%; height:100%; object-fit:cover; object-position:center; display:block; }
+  .feed-author{ display:flex; flex-direction:column; line-height:1.2; }
+  .feed-author .name{ font-weight:600; color:#111; }
+  .feed-author .time{ font-size:.85rem; color:#6b7280; }
+  .feed-menu{ margin-left:auto; color:#9aa0a6; }
+  .feed-thumb{ position:relative; aspect-ratio:3/4; background:#f0f2f4; margin-top:10px; }
+  .feed-thumb img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; display:block; }
+  .feed-body{ padding:12px; }
+  .feed-meta{ color:#6b7280; font-size:.9rem; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .feed-title{ margin:6px 0 6px; font-weight:600; font-size:1rem; color:#111; line-height:1.3; }
+  .feed-title a{ color:inherit; text-decoration:none; }
+  .feed-title a:hover{ color:var(--info); text-decoration:underline; }
+  .feed-text{
+    color:#374151; font-size:.95rem; margin-bottom:6px;
+    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
+  }
+  .feed-text.expanded{ display:block; -webkit-line-clamp:unset; }
+  .more-link{ font-size:.9rem; color:#6b7280; text-decoration:none; }
+  .more-link:hover{ text-decoration:underline; }
+  .feed-actions{
+    margin-top:auto;
+    display:flex; align-items:center; gap:16px; color:#6b7280; font-size:.95rem; padding:0 12px 12px;
+  }
+  .feed-actions .bi{ font-size:1.05rem; }
+  .like-btn{ display:inline-flex; align-items:center; gap:6px; cursor:pointer; user-select:none; }
+  .like-btn.active{ color:#ef4444; }
+  .like-btn .bi-heart-fill{ display:none; }
+  .like-btn.active .bi-heart{ display:none; }
+  .like-btn.active .bi-heart-fill{ display:inline-block; }
+
+  .edit-chip{
+    position:absolute; top:10px; right:10px; font-size:.85rem;
+    padding:4px 10px; border-radius:999px; border:1px solid #dfe3e7; background:#fff; color:#374151; text-decoration:none; z-index:2;
+  }
+  .edit-chip:hover{ background: color-mix(in srgb, var(--surface) 55%, white); }
+
+  /* 찜한 모임 – 유지 */
+  .like-card{ border:1px solid #eceef2; border-radius:12px; padding:14px; display:flex; gap:14px; background:#fff; transition:opacity .2s ease, transform .2s ease; }
+  .like-thumb{ flex:0 0 140px; height:140px; border-radius:10px; overflow:hidden; background:#f0f2f4; }
+  .like-thumb img{ width:100%; height:100%; object-fit:cover; }
+  .like-title{ margin:0; font-weight:800; font-size:1.14rem; }
+  .like-meta{ font-size:1rem; color:#6b7280; }
+  .like-card.fade-out{ opacity:0; transform:translateY(4px); }
+
+  /* 리포트 – 좌우 분할 */
+  .chart-card{ border:1px solid #eceef2; border-radius:12px; background:#fff; padding:12px; height:100%; }
+  .chart-title{ font-weight:800; margin-bottom:8px; }
+  .chart-wrap{ width:100%; overflow-x:auto; }
+  .chart-legend{ font-size:.9rem; color:#6b7280; }
+
+  /* ===== 페이지네이션 ===== */
+  .pagination .page-link{ color:#374151; border-radius:8px; }
+  .pagination .page-item.active .page-link{
+    background-color: color-mix(in srgb, var(--surface) 55%, white);
+    border-color: #dfe3e7; color: var(--primary-strong);
+  }
+
+  /* ===== Instagram Box Footer ===== */
+  .ig-footer{
+    background:var(--ft-card);
+    border:1px solid var(--ft-line);
+    border-radius:12px;
+    padding:20px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:16px;
+  }
+  .ig-footer .ft-title{
+    font-weight:600;
+    margin-bottom:6px;
+    display:flex;align-items:center;gap:6px;
+    color:#444;
+    font-size:15px;
+  }
+  .ig-footer a{
+    display:block;
+    color:var(--ft-muted);
+    text-decoration:none;
+    margin:4px 0;
+    font-size:14px;
+    transition:color .2s ease;
+  }
+  .ig-footer a:hover{ color:#555; text-decoration:underline; }
+  .ig-footer .ft-title i.fa-instagram{ color:#E4405F; opacity:.8; }
+  .ig-footer a:focus-visible{outline:2px solid #aaa; outline-offset:2px;}
+
+  /* ===== 포커스 파란 테두리 제거 ===== */
+  input:focus, select:focus, textarea:focus, button:focus,
+  .tab-btn:focus{
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #d7dde3 !important;
+  }
+  :focus-visible{
+    outline:2px solid color-mix(in srgb, var(--surface) 55%, white);
+    outline-offset:2px;
+  }
+
+  /* ===== 네비 폭 동기화용 ===== */
+  .span-sync{ display:block; box-sizing:border-box; }
+  .tabs-inner.span-sync{ display:flex !important; }
+
+/* desktop: hide mini banner (moved to navbar) */
+@media (min-width:992px){ .top-banner{ display:none !important; } }
+
+/* auth-links: signup / login / notice (desktop only) */
+.auth-links{ gap:4px; }
+.auth-links .auth-link{ text-decoration:none; font-size:.95rem; color:#374151; padding:0 6px; }
+.auth-links .auth-link:hover{ text-decoration:underline; }
+.auth-links .auth-div{ color:#c9ccd2; }
+</style>
+<style>/*tab-flicker-fix*/ .tab-panel{display:none;} .tab-panel.active{display:block;}</style>
+<style>
+/* === my_page: shrink "내가 쓴 글" feed only === */
+#act-posts .feed-grid{ gap:12px; }
+#act-posts .feed-card{ border-radius:12px; }
+#act-posts .feed-head{ padding:8px 8px 0 8px; gap:8px; }
+#act-posts .avatar{ width:30px; height:30px; flex:0 0 30px; }
+#act-posts .feed-body{ padding:10px; }
+#act-posts .feed-meta{ font-size:.85rem; gap:8px; }
+#act-posts .feed-title{ font-size:.95rem; }
+#act-posts .feed-text{ font-size:.9rem; -webkit-line-clamp:2; }
+#act-posts .more-link{ font-size:.85rem; }
+#act-posts .feed-actions{ font-size:.85rem; gap:12px; padding:0 10px 10px; }
+#act-posts .feed-actions .bi{ font-size:1rem; }
+#act-posts .edit-chip{ top:8px; right:8px; font-size:.8rem; padding:3px 8px; }
+
+/* reduce thumbnail height a bit (from tall 3/4 → 4/3) */
+#act-posts .feed-thumb{ aspect-ratio: 4/3; margin-top:8px; }
+
+</style>
+</head>
+<body>
+
+  <!-- 상단 미니 배너 -->
+  <div class="top-banner text-end py-1 px-3">
+    <a href="/accounts/signup/">회원가입</a><a href="/accounts/login/">로그인</a><a href="/community/?tab=notice">공지사항</a>
+  </div>
+
+  <!-- ===== 데스크톱 헤더 (커뮤니티와 동일) ===== -->
+  <nav class="navbar bg-white border-bottom sticky-top bar-lg">
+    <div class="container d-flex justify-content-center">
+      <div class="d-flex align-items-center justify-content-center gap-3 w-100 flex-wrap">
+        <div class="category-trigger">
+          <button id="btnCatDesk" class="btn btn-link text-dark fs-4" data-bs-toggle="tooltip" data-bs-placement="bottom" title="카테고리" aria-expanded="false">
+            <i class="bi bi-grid"></i>
+          </button>
+          <div id="panelDesk" class="mega-panel" role="menu" aria-label="카테고리">
+            <div id="gridDesk" class="mega-grid"></div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <a class="navbar-brand" href="index.html">HOBBY</a>
+
+        <!-- 검색(오버레이 포함) -->
+        <form class="d-flex search-wrap" autocomplete="off">
+          <input type="text" style="position:absolute; left:-9999px; top:-9999px; height:0; width:0; opacity:0;" aria-hidden="true" tabindex="-1">
+          <input
+            id="globalSearch"
+            class="form-control search-bar"
+            type="search"
+            placeholder="지금 생각나는 취미를 검색하세요"
+            aria-label="Search"
+            name="hobby_search"
+            autocomplete="off"
+            autocapitalize="off"
+            autocorrect="off"
+            spellcheck="false"
+            enterkeyhint="search"
+            inputmode="search"
+          >
+          <div id="searchOverlay" class="search-overlay shadow-sm" role="dialog" aria-label="검색 제안" aria-hidden="true">
+            <div class="so-section">
+              <div class="so-title">인기 검색어</div>
+              <div class="so-chips" id="popularChips"></div>
+            </div>
+            <div class="so-section">
+              <div class="so-row">
+                <div class="so-title mb-0">최근 검색어</div>
+                <button class="btn btn-sm btn-link p-0 ms-auto so-clear-all" type="button" id="clearRecent" aria-label="최근 검색어 모두 삭제">전체삭제</button>
+              </div>
+              <div class="so-chips" id="recentChips"></div>
+            </div>
+          </div>
+        </form>
+
+        <div class="icon-row">
+          <a class="nav-icon text-dark text-decoration-none" href="/crew_main" title="크루"><i class="bi bi-people fs-4"></i><span>크루</span></a>
+          <a class="nav-icon text-dark text-decoration-none" href="/alert" title="알림"><i class="bi bi-bell fs-4"></i><span>알림</span></a>
+          <a class="nav-icon text-dark text-decoration-none" href="/pick" title="찜"><i class="bi bi-heart fs-4"></i><span>찜</span></a>
+          <a class="nav-icon text-dark text-decoration-none" href="/mypage?tab=profile" title="마이"><i class="bi bi-person fs-4"></i><span>마이</span></a>
+
+          <!-- PC text links -->
+          <div class="auth-links d-none d-lg-flex align-items-center ms-2">
+            <a class="auth-link" href="/accounts/signup/">회원가입</a>
+            <span class="auth-div">|</span>
+            <a class="auth-link" href="/accounts/login/">로그인</a>
+            <span class="auth-div">|</span>
+            <a class="auth-link" href="/community/?tab=notice">공지사항</a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== 모바일 헤더 ===== -->
+  <nav class="navbar bg-white border-bottom sticky-top bar-sm w-100" id="mobileBar">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
+        <div class="category-trigger-sm">
+          <button id="btnCatM" class="btn btn-link text-dark fs-4 me-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="카테고리" aria-expanded="false">
+            <i class="bi bi-grid"></i>
+          </button>
+          <div id="panelM" class="mega-panel mobile" role="menu" aria-label="카테고리 (모바일)">
+            <div id="gridM" class="mega-grid"></div>
+          </div>
+        </div>
+        <a class="navbar-brand ms-1" href="index.html">HOBBY</a>
+      </div>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenuSm" aria-controls="navMenuSm" aria-expanded="false">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+    <div class="collapse navbar-collapse bg-white" id="navMenuSm">
+      <div class="p-3 border-bottom">
+        <form class="input-group" autocomplete="off">
+          <input type="text" style="position:absolute; left:-9999px; top:-9999px; height:0; width:0; opacity:0;" aria-hidden="true" tabindex="-1">
+          <input
+            id="globalSearchSm"
+            type="search"
+            class="form-control"
+            placeholder="취미 검색…"
+            aria-label="Search"
+            name="hobby_search_sm"
+            autocomplete="off"
+            autocapitalize="off"
+            autocorrect="off"
+            spellcheck="false"
+            enterkeyhint="search"
+            inputmode="search"
+          >
+          <button class="btn btn-outline-secondary" type="button"><i class="bi bi-search"></i></button>
+        </form>
+      </div>
+      <ul class="navbar-nav p-2 gap-1">
+        <li class="nav-item"><a class="nav-link" href="/crew_main"><i class="bi bi-people me-2"></i>크루</a></li>
+        <li class="nav-item"><a class="nav-link" href="/alert"><i class="bi bi-bell me-2"></i>알림</a></li>
+        <li class="nav-item"><a class="nav-link" href="/pick"><i class="bi bi-heart me-2"></i>찜</a></li>
+        <li class="nav-item"><a class="nav-link" href="/mypage?tab=profile"><i class="bi bi-person me-2"></i>마이</a></li>
+        <li class="nav-item"><a class="nav-link text-danger" href="/logout"><i class="bi bi-box-arrow-right me-2"></i>로그아웃</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 페이지 헤더 ===== -->
+  <header class="page-header">
+    <div class="container">
+      <div class="span-sync" id="mpBreadcrumb">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+          <div class="page-title">마이페이지</div>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+              <li class="breadcrumb-item active" aria-current="page">마이페이지</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== 탭 ===== -->
+  <div class="tabs-wrap">
+    <div class="container">
+      <div class="py-2 tabs-inner span-sync" id="mpTabs">
+        <div class="tab-group">
+          <button class="tab-btn active" data-target="panel-profile" type="button" aria-controls="panel-profile" aria-selected="true">내 프로필</button>
+          <button class="tab-btn" data-target="panel-crews" type="button" aria-controls="panel-crews" aria-selected="false">내 모임</button>
+          <button class="tab-btn" data-target="panel-activity" type="button" aria-controls="panel-activity" aria-selected="false">내 활동</button>
+        </div>
+        <a href="/logout" class="btn btn-outline-danger btn-logout-tab" id="btnLogoutTab"><i class="bi bi-box-arrow-right me-1"></i>로그아웃</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 콘텐츠 ===== -->
+  <main class="py-3">
+    <div class="container">
+      <div class="span-sync" id="mpViewport">
+
+        <!-- 내 프로필 -->
+        <section id="panel-profile" class="tab-panel active" role="region" aria-label="내 프로필">
+          <div class="profile-card">
+            <div class="profile-head" id="profileHead">
+              <div class="profile-avatar" id="pfAvatarBox">
+                <img id="pfAvatar" src="https://i.pravatar.cc/160?img=68" alt="프로필 사진">
+              </div>
+              <div class="flex-grow-1">
+                <div class="d-flex align-items-center gap:2">
+                  <h5 class="m-0" id="pfNickname">소금빵</h5>
+                </div>
+                <div class="muted mt-1" id="pfEmail">saltbread@example.com</div>
+              </div>
+              <div class="btn-wrap">
+                <button class="btn btn-dark" id="btnEdit"><i class="bi bi-pencil-square me-1"></i>수정</button>
+              </div>
+            </div>
+            <div class="profile-body">
+              <!-- 보기 모드 -->
+              <div id="viewMode">
+                <div class="kv">
+                  <div class="k">이름</div><div class="v" id="v_name">김하늘</div>
+                  <div class="k">ID</div><div class="v" id="v_username">haneul_k</div>
+                  <div class="k">PW</div><div class="v" id="v_maskpw">********</div>
+                  <div class="k">이메일</div><div class="v" id="v_email">saltbread@example.com</div>
+                  <div class="k">성별</div><div class="v" id="v_gender">여성</div>
+                  <div class="k">생년월일</div><div class="v" id="v_birth">2003-03-21</div>
+                  <div class="k">주소</div><div class="v" id="v_addr">서울특별시 영등포구 여의대로 00</div>
+                  <div class="k">MBTI</div><div class="v" id="v_mbti">INFP</div>
+                </div>
+              </div>
+
+              <!-- 수정 모드 -->
+              <form id="editMode" class="d-none" novalidate>
+                <div class="row g-3">
+                  <div class="col-12 d-flex align-items-center gap-3">
+                    <div class="profile-avatar">
+                      <img id="pfPreview" src="https://i.pravatar.cc/160?img=68" alt="프로필 사진 미리보기">
+                    </div>
+                    <div>
+                      <label class="form-label mb-1">프로필 사진</label>
+                      <input type="file" accept="image/*" class="form-control form-control-sm" id="pfFile">
+                      <div class="form-text">이미지 파일 선택 시 미리보기 됩니다.</div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="form-label">닉네임</label>
+                    <input type="text" class="form-control" id="f_nickname" required>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="form-label">이름</label>
+                    <input type="text" class="form-control" id="f_name" required>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="form-label">ID</label>
+                    <input type="text" class="form-control" id="f_username" required>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="form-label">PW</label>
+                    <input type="password" class="form-control" id="f_password" placeholder="변경 시에만 입력">
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="form-label">이메일</label>
+                    <input type="email" class="form-control" id="f_email" required>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="form-label">성별</label>
+                    <select class="form-select" id="f_gender" required>
+                      <option value="">선택</option>
+                      <option>남성</option><option>여성</option><option>기타</option>
+                    </select>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="form-label">생년월일</label>
+                    <input type="date" class="form-control" id="f_birth" required>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="form-label">MBTI</label>
+                    <input type="text" class="form-control" id="f_mbti" placeholder="예: INFP">
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label">주소</label>
+                    <input type="text" class="form-control" id="f_addr" required>
+                  </div>
+                </div>
+                <div class="d-flex gap-2 justify-content-end mt-3">
+                  <button type="button" class="btn btn-outline-secondary" id="btnCancel">취소</button>
+                  <button type="submit" class="btn btn-dark" id="btnSave">완료</button>
+                </div>
+              </form>
+
+              <!-- 저장 완료 알림 -->
+              <div id="saveAlert" class="alert alert-success mt-3 d-none" role="alert">
+                프로필 수정이 완료되었습니다.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 내 모임 -->
+        <section id="panel-crews" class="tab-panel" role="region" aria-label="내 모임">
+          <div class="row g-3 align-items-stretch">
+            <div class="col-12 col-md-6">
+              <div class="crew-card h-100">
+                <div class="crew-thumb"><img src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=600&auto=format&fit=crop" alt="사진산책"></div>
+                <div class="flex-grow-1 d-flex flex-column">
+                  <h5 class="crew-title">여의도 노을 사진산책</h5>
+                  <div class="crew-meta">매주 토요일 · 여의도 · 12/30 참여</div>
+                  <div class="mt-auto d-flex gap-2 pt-2">
+                    <a href="/crew/201" class="btn btn-sm btn-outline-secondary">상세</a>
+                    <a href="/crew/201/leave" class="btn btn-sm btn-outline-danger">탈퇴</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-6">
+              <div class="crew-card h-100">
+                <div class="crew-thumb"><img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=600&auto=format&fit=crop" alt="홈쿠킹"></div>
+                <div class="flex-grow-1 d-flex flex-column">
+                  <h5 class="crew-title">파스타/리소토 홈쿠킹</h5>
+                  <div class="crew-meta">격주 일요일 · 마포 · 4/20 참여</div>
+                  <div class="mt-auto d-flex gap-2 pt-2">
+                    <a href="/crew/312" class="btn btn-sm btn-outline-secondary">상세</a>
+                    <a href="/crew/312/leave" class="btn btn-sm btn-outline-danger">탈퇴</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <nav class="mt-3" aria-label="내 모임 페이지 이동">
+            <ul class="pagination justify-content-center">
+              <li class="page-item disabled"><span class="page-link">이전</span></li>
+              <li class="page-item active"><span class="page-link">1</span></li>
+              <li class="page-item"><a class="page-link" href="?tab=crews&page=2">2</a></li>
+              <li class="page-item"><a class="page-link" href="?tab=crews&page=3">3</a></li>
+              <li class="page-item"><a class="page-link" href="?tab=crews&page=2">다음</a></li>
+            </ul>
+          </nav>
+        </section>
+
+        <!-- 내 활동 -->
+        <section id="panel-activity" class="tab-panel" role="region" aria-label="내 활동">
+          <div class="subtabs" role="tablist" aria-label="내 활동 분류">
+            <button class="subtab-btn active" data-subpanel="act-posts" aria-selected="true">내가 쓴 글</button>
+            <button class="subtab-btn" data-subpanel="act-likes" aria-selected="false">찜한 모임</button>
+            <button class="subtab-btn" data-subpanel="act-report" aria-selected="false">리포트</button>
+          </div>
+
+          <!-- 내가 쓴 글 -->
+          <div id="act-posts" class="subpanel">
+            <div class="feed-grid" id="postFeed">
+              <article class="feed-card">
+                <a href="/mypage/activity/edit?post=905" class="edit-chip">편집</a>
+                <div class="feed-head">
+                  <span class="avatar"><img src="https://i.pravatar.cc/80?img=68" alt="나의 프로필"></span>
+                  <div class="feed-author">
+                    <span class="name">소금빵</span>
+                    <span class="time">2025-08-11 19:05</span>
+                  </div>
+                  <i class="bi bi-three-dots-vertical feed-menu" aria-hidden="true"></i>
+                </div>
+                <a href="/community/reviews/5" class="text-decoration-none">
+                  <div class="feed-thumb">
+                    <img src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=1200&auto=format&fit=crop" alt="노을 사진산책 후기">
+                  </div>
+                </a>
+                <div class="feed-body">
+                  <div class="feed-meta">
+                    <span>여의도 / 사진산책</span>
+                    <span class="text-warning ms-auto">
+                      <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i><i class="bi bi-star"></i>
+                      <span class="ms-1">3.5</span>
+                    </span>
+                  </div>
+                  <h3 class="feed-title"><a href="/community/reviews/5">노을 타이밍이 미쳤다… 포토스팟 꿀팁 득템</a></h3>
+                  <p class="feed-text">구도 잡는 법부터 라이트룸 프리셋까지 한 큐에 배웠습니다.</p>
+                  <a href="#" class="more-link" data-more>더보기</a>
+                </div>
+                <div class="feed-actions">
+                  <span class="like-btn" data-like>
+                    <i class="bi bi-heart"></i><i class="bi bi-heart-fill"></i><span class="like-count">2</span>
+                  </span>
+                  <span><i class="bi bi-chat"></i> <span class="comment-count">2</span></span>
+                </div>
+              </article>
+
+              <article class="feed-card">
+                <a href="/mypage/activity/edit?post=103" class="edit-chip">편집</a>
+                <div class="feed-head">
+                  <span class="avatar"><img src="https://i.pravatar.cc/80?img=68" alt="나의 프로필"></span>
+                  <div class="feed-author">
+                    <span class="name">소금빵</span>
+                    <span class="time">2025-08-12 11:20</span>
+                  </div>
+                  <i class="bi bi-three-dots-vertical feed-menu" aria-hidden="true"></i>
+                </div>
+                <a href="/community/board/103" class="text-decoration-none">
+                  <div class="feed-thumb">
+                    <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop" alt="사진 장비 질문 글">
+                  </div>
+                </a>
+                <div class="feed-body">
+                  <div class="feed-meta">
+                    <span>커뮤니티 / 자유게시판</span>
+                  </div>
+                  <h3 class="feed-title"><a href="/community/board/103">사진 초보 장비 추천 좀요</a></h3>
+                  <p class="feed-text">입문용 바디/단렌즈 조합으로 가성비 좋은 셋업 있을까요?</p>
+                  <a href="#" class="more-link" data-more>더보기</a>
+                </div>
+                <div class="feed-actions">
+                  <span class="like-btn" data-like>
+                    <i class="bi bi-heart"></i><i class="bi bi-heart-fill"></i><span class="like-count">1</span>
+                  </span>
+                  <span><i class="bi bi-chat"></i> <span class="comment-count">5</span></span>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <!-- 찜한 모임 -->
+          <div id="act-likes" class="subpanel panel-hidden">
+            <div class="row g-3">
+              <div class="col-12 col-md-6 col-lg-4">
+                <div class="like-card">
+                  <div class="like-thumb"><img src="image/wine.jpg" alt="와인 클래스"></div>
+                  <div class="flex-grow-1">
+                    <p class="like-title mb-1"><a href="/crew/901" class="text-decoration-none">와인 클래스 · 향 테이스팅</a></p>
+                    <div class="like-meta">광화문 · 4.7 ★ (123)</div>
+                    <div class="mt-1">
+                      <button class="btn btn-sm btn-outline-danger" data-unlike><i class="bi bi-heartbreak me-1"></i>찜 해제</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-md-6 col-lg-4">
+                <div class="like-card">
+                  <div class="like-thumb"><img src="image/boardgame.jpg" alt="보드게임"></div>
+                  <div class="flex-grow-1">
+                    <p class="like-title mb-1"><a href="/crew/777" class="text-decoration-none">성수 보드게임 라운지</a></p>
+                    <div class="like-meta">성수 · 5.0 ★ (98)</div>
+                    <div class="mt-1">
+                      <button class="btn btn-sm btn-outline-danger" data-unlike><i class="bi bi-heartbreak me-1"></i>찜 해제</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 리포트 -->
+          <div id="act-report" class="subpanel panel-hidden">
+            <div class="row g-3">
+              <div class="col-12 col-lg-6">
+                <div class="chart-card h-100">
+                  <div class="chart-title d-flex align-items-center justify-content-between">
+                    <span>나와 비슷한 사용자가 많이 찾는 취미</span>
+                    <small class="chart-legend">단위: 검색/관심 건수</small>
+                  </div>
+                  <div class="chart-wrap">
+                    <div id="barSimilar" aria-label="비슷한 사용자 인기 취미 막대 차트" role="img"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-6">
+                <div class="chart-card h-100">
+                  <div class="chart-title d-flex align-items-center justify-content-between">
+                    <span>요일별 활동 패턴</span>
+                    <small class="chart-legend">단위: 활동 건수</small>
+                  </div>
+                  <div class="chart-wrap">
+                    <div id="barWeek" aria-label="요일별 활동 패턴 막대 차트" role="img"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== Footer – Instagram Box ===== -->
+  <section class="py-4">
+    <div class="container">
+      <div class="span-sync" id="mpFooter">
+        <footer class="ig-footer" role="contentinfo" aria-label="푸터">
+          <div>
+            <div class="ft-title">help</div>
+            <a href="#">FAQ</a>
+            <a href="#">Contact</a>
+          </div>
+
+          <div>
+            <div class="ft-title">News</div>
+            <a href="community.html?tab=panel-notice">Notice</a>
+            <a href="#">Update</a>
+          </div>
+
+          <div>
+            <div class="ft-title">
+              <i class="fab fa-instagram" aria-hidden="true"></i>
+              <span>instagram</span>
+            </div>
+            <a id="igLink" href="https://instagram.com/yourbrand" target="_blank" rel="noopener">@yourbrand</a>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* ===== 헤더 툴팁 ===== */
+  const tooltips=[];
+  document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el=>{
+    tooltips.push(new bootstrap.Tooltip(el,{placement:'bottom',fallbackPlacements:[]}));
+  });
+  const tooltipDisposeOn = el => bootstrap.Tooltip.getInstance(el)?.dispose();
+  const tooltipEnableOn  = el => { if(!bootstrap.Tooltip.getInstance(el)) new bootstrap.Tooltip(el,{placement:'bottom',fallbackPlacements:[]}); };
+
+  /* ===== 카테고리 칩 ===== */
+  const categories=[
+    {title:'아웃도어',emoji:'🏕️'},{title:'피트니스',emoji:'🧘'},{title:'뷰티',emoji:'💄'},{title:'공예·DIY',emoji:'🧶'},
+    {title:'스포츠',emoji:'⚽'},{title:'베이킹',emoji:'🍞'},{title:'문화예술',emoji:'🎨'},{title:'자기계발',emoji:'📚'},
+    {title:'심리·상담',emoji:'☕'},{title:'수상레포츠',emoji:'🏊'},{title:'요리',emoji:'🍳'},{title:'여행',emoji:'✈️'}
+  ];
+  const gridDesk=document.getElementById('gridDesk');
+  const gridM=document.getElementById('gridM');
+  function renderChips(container){
+    container.innerHTML = categories.map(c=>(
+      '<button type="button" class="cat-chip" data-title="'+c.title+'">'+
+        '<div class="chip-badge">'+c.emoji+'</div>'+
+        '<div class="cat-title">'+c.title+'</div>'+
+      '</button>'
+    )).join('');
+  }
+  renderChips(gridDesk); renderChips(gridM);
+
+  function setUnifiedChipWidth(scope=document){
+    const chips=[...scope.querySelectorAll('.cat-chip')]; if(!chips.length) return;
+    chips.forEach(ch=>ch.style.width='auto');
+    const maxW=Math.ceil(Math.max(...chips.map(ch=>ch.scrollWidth)));
+    const clamped=Math.min(Math.max(maxW,120),200);
+    document.documentElement.style.setProperty('--chip-col-w',clamped+'px');
+    chips.forEach(ch=>ch.style.width='100%');
+  }
+  const recalcAll=()=>setUnifiedChipWidth(document);
+  recalcAll(); addEventListener('resize',recalcAll);
+  if(document.fonts?.ready) document.fonts.ready.then(recalcAll);
+
+  /* ===== 카테고리 패널 토글 ===== */
+  const btnCatDesk=document.getElementById('btnCatDesk');
+  const panelDesk=document.getElementById('panelDesk');
+  function keepPanelOnScreen(panel){
+    panel.style.left='50%'; panel.style.right=''; panel.style.transform='translateX(-50%)';
+    const prev=panel.style.display; panel.style.display='block';
+    const rect=panel.getBoundingClientRect(); const vw=innerWidth; const m=16;
+    if(rect.left<m){ panel.style.left=m+'px'; panel.style.right=''; panel.style.transform='none'; }
+    else if(rect.right>vw-m){ panel.style.left=''; panel.style.right=m+'px'; panel.style.transform='none'; }
+    panel.style.display=prev||'block';
+  }
+  btnCatDesk?.addEventListener('click',()=>{
+    const open=panelDesk.style.display==='block';
+    if(!open){ panelDesk.style.display='block'; keepPanelOnScreen(panelDesk); tooltipDisposeOn(btnCatDesk); }
+    else{ panelDesk.style.display='none'; tooltipEnableOn(btnCatDesk); }
+    btnCatDesk.setAttribute('aria-expanded',String(!open));
+  });
+  document.addEventListener('click',e=>{
+    if(panelDesk.style.display==='block'&&!panelDesk.contains(e.target)&&!btnCatDesk.contains(e.target)){
+      panelDesk.style.display='none'; btnCatDesk.setAttribute('aria-expanded','false'); tooltipEnableOn(btnCatDesk);
+    }
+  });
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){ panelDesk.style.display='none'; btnCatDesk.setAttribute('aria-expanded','false'); closeMobilePanel?.(); tooltipEnableOn(btnCatDesk); }
+  });
+
+  const btnCatM=document.getElementById('btnCatM');
+  const panelM=document.getElementById('panelM');
+  function openMobilePanel(){ panelM.style.display='block'; btnCatM.setAttribute('aria-expanded','true'); setUnifiedChipWidth(panelM); tooltipDisposeOn(btnCatM); }
+  function closeMobilePanel(){ panelM.style.display='none'; btnCatM.setAttribute('aria-expanded','false'); tooltipEnableOn(btnCatM); }
+  function panelMHidden(){ return panelM.style.display!=='block'; }
+  btnCatM?.addEventListener('click',e=>{ e.preventDefault(); panelMHidden()?openMobilePanel():closeMobilePanel(); });
+  document.addEventListener('click',e=>{
+    const isInside=panelM.contains(e.target)||btnCatM.contains(e.target);
+    if(!isInside&&!panelMHidden()) closeMobilePanel();
+  });
+  document.addEventListener('click',e=>{
+    const chip=e.target.closest('.cat-chip'); if(!chip) return;
+    if(!panelMHidden()) closeMobilePanel();
+  });
+
+  /* ===== 상단 검색 오버레이 ===== */
+  (function(){
+    const input = document.getElementById('globalSearch');
+    const overlay = document.getElementById('searchOverlay');
+    const popularEl = document.getElementById('popularChips');
+    const recentEl = document.getElementById('recentChips');
+    const clearRecentBtn = document.getElementById('clearRecent');
+    if(!input || !overlay) return;
+
+    function suppressBrowserSuggestions(el){
+      el.setAttribute('autocomplete','off');
+      el.setAttribute('readonly','readonly');
+      setTimeout(()=>{ el.removeAttribute('readonly'); }, 50);
+    }
+
+    const popular = ['하이킹','보드게임','드로잉','와인클래스','홈쿠킹','사진산책','러닝'];
+    const LS_KEY = 'hobby_recent_keywords';
+
+    const getRecent = () => { try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch { return []; } };
+    const setRecent = (arr) => localStorage.setItem(LS_KEY, JSON.stringify(arr.slice(0,12)));
+
+    function renderChips(list, container, {deletable=false}={}){
+      container.innerHTML = '';
+      list.forEach((word, idx)=>{
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'so-chip';
+        chip.setAttribute('data-word', word);
+        chip.innerHTML = `<span class="txt">${word}</span>` + (deletable? `<span class="del" data-index="${idx}" aria-label="삭제">×</span>`:'');
+        container.appendChild(chip);
+      });
+    }
+
+    function openOverlay(){
+      overlay.setAttribute('aria-hidden','false');
+      const wrap = input.closest('.search-wrap') || input.parentElement;
+      if (wrap) {
+        const rect = wrap.getBoundingClientRect();
+        overlay.style.width = rect.width + 'px';
+      }
+    }
+    function closeOverlay(){
+      overlay.setAttribute('aria-hidden','true');
+      overlay.querySelectorAll('.kb-focus').forEach(el=>el.classList.remove('kb-focus'));
+    }
+
+    renderChips(popular, popularEl, {deletable:false});
+    renderChips(getRecent(), recentEl, {deletable:true});
+
+    input.addEventListener('focus', ()=>{ suppressBrowserSuggestions(input); openOverlay(); });
+    input.addEventListener('input', openOverlay);
+    document.addEventListener('click', (e)=>{ if(!(overlay.contains(e.target)||input.contains(e.target))) closeOverlay(); });
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeOverlay(); });
+
+    overlay.addEventListener('click', (e)=>{
+      const del = e.target.closest('.del');
+      if (del){
+        const idx = Number(del.dataset.index);
+        const arr = getRecent(); arr.splice(idx,1); setRecent(arr);
+        renderChips(arr, recentEl, {deletable:true}); return;
+      }
+      const chip = e.target.closest('.so-chip'); if (!chip) return;
+      const word = chip.dataset.word || chip.querySelector('.txt')?.textContent || '';
+      if (!word) return;
+      input.value = word;
+      const arr = getRecent().filter(v=>v!==word); arr.unshift(word); setRecent(arr);
+      renderChips(arr, recentEl, {deletable:true});
+      closeOverlay();
+    });
+
+    input.addEventListener('keydown', (e)=>{
+      if (e.key === 'Enter'){
+        const word = (input.value || '').trim();
+        if (!word) return;
+        const arr = getRecent().filter(v=>v!==word); arr.unshift(word); setRecent(arr);
+        renderChips(arr, recentEl, {deletable:true});
+        closeOverlay();
+      }
+      if (['ArrowDown','ArrowUp'].includes(e.key)){
+        const focusables = overlay.querySelectorAll('.so-chip'); if (!focusables.length) return;
+        e.preventDefault();
+        const first = focusables[0];
+        focusables.forEach(el=>el.classList.remove('kb-focus'));
+        first.classList.add('kb-focus'); first.scrollIntoView({block:'nearest', inline:'nearest'});
+      }
+    });
+
+    clearRecentBtn?.addEventListener('click', ()=>{ setRecent([]); renderChips([], recentEl, {deletable:true}); });
+  })();
+
+  /* ===== 모바일 검색 자동완성 억제 ===== */
+  (function(){
+    const sm = document.getElementById('globalSearchSm'); if(!sm) return;
+    function suppress(el){ el.setAttribute('autocomplete','off'); el.setAttribute('readonly','readonly'); setTimeout(()=>{ el.removeAttribute('readonly'); }, 50); }
+    sm.addEventListener('focus', ()=> suppress(sm));
+  })();
+
+  /* ===== 상위 탭 전환 + URL 동기화 ===== */
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab-btn').forEach(b=>{ b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+      btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+
+      const target = btn.dataset.target;
+      ['panel-profile','panel-crews','panel-activity'].forEach(id=>{
+        const el=document.getElementById(id);
+        if(!el) return;
+        el.classList.toggle('active', id===target);
+      });
+
+      // URL ?tab=profile/crews/activity
+      const u = new URL(location);
+      const map = { 'panel-profile':'profile', 'panel-crews':'crews', 'panel-activity':'activity' };
+      u.searchParams.set('tab', map[target] || 'profile');
+      u.searchParams.set('page','1');
+      history.pushState({},'',u.toString());
+    });
+  });
+
+  // 초기 탭 적용
+  (function initTopTabFromURL(){
+    const u=new URL(location);
+    const tab=u.searchParams.get('tab')||'profile';
+    const map={profile:'panel-profile',crews:'panel-crews',activity:'panel-activity'};
+    const id = map[tab] || 'panel-profile';
+    document.querySelectorAll('.tab-btn').forEach(b=>{
+      const isActive=b.dataset.target===id;
+      b.classList.toggle('active', isActive);
+      b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+    ['panel-profile','panel-crews','panel-activity'].forEach(pid=>{
+      const el=document.getElementById(pid);
+      if(!el) return;
+      el.classList.toggle('active', pid===id);
+    });
+  })();
+
+  window.addEventListener('popstate', function(){
+    const u = new URL(location);
+    const tab = u.searchParams.get('tab') || 'profile';
+    const map={profile:'panel-profile',crews:'panel-crews',activity:'panel-activity'};
+    const id = map[tab] || 'panel-profile';
+    ['panel-profile','panel-crews','panel-activity'].forEach(pid=>{
+      const el=document.getElementById(pid);
+      if(!el) return;
+      el.classList.toggle('active', pid===id);
+    });
+    document.querySelectorAll('.tab-btn').forEach(b=>{
+      const isActive=b.dataset.target===id;
+      b.classList.toggle('active', isActive);
+      b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+  });
+
+  /* ===== 내 활동 – 서브탭 ===== */
+  document.querySelectorAll('.subtab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.subtab-btn').forEach(b=>{ b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+      btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+      const id = btn.dataset.subpanel;
+      document.querySelectorAll('.subpanel').forEach(p=> p.classList.add('panel-hidden'));
+      document.getElementById(id)?.classList.remove('panel-hidden');
+      // URL ?sub=posts/likes/report (보조)
+      const u = new URL(location);
+      const map = { 'act-posts':'posts', 'act-likes':'likes', 'act-report':'report' };
+      u.searchParams.set('sub', map[id] || 'posts'); history.replaceState({},'',u.toString());
+    });
+  });
+  // 초기 서브탭
+  (function initSubTabFromURL(){
+    const u=new URL(location); const sub=u.searchParams.get('sub')||'posts';
+    const map={posts:'act-posts',likes:'act-likes',report:'act-report'};
+    const id=map[sub]||'act-posts';
+    document.querySelectorAll('.subpanel').forEach(p=> p.classList.add('panel-hidden'));
+    document.getElementById(id)?.classList.remove('panel-hidden');
+    document.querySelectorAll('.subtab-btn').forEach(b=>{
+      const on = (b.dataset.subpanel===id);
+      b.classList.toggle('active', on); b.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+  })();
+
+  /* ===== 프로필 편집 토글 ===== */
+  const viewMode = document.getElementById('viewMode');
+  const editMode = document.getElementById('editMode');
+  const btnEdit  = document.getElementById('btnEdit');
+  const btnCancel= document.getElementById('btnCancel');
+  const saveAlert= document.getElementById('saveAlert');
+  const pfFile   = document.getElementById('pfFile');
+  const pfPreview= document.getElementById('pfPreview');
+  const pfAvatar = document.getElementById('pfAvatar');
+  const pfNickname= document.getElementById('pfNickname');
+  const pfEmail = document.getElementById('pfEmail');
+  const profileHead = document.getElementById('profileHead');
+
+  // 폼 필드
+  const f = {
+    nickname: document.getElementById('f_nickname'),
+    name: document.getElementById('f_name'),
+    username: document.getElementById('f_username'),
+    password: document.getElementById('f_password'),
+    email: document.getElementById('f_email'),
+    gender: document.getElementById('f_gender'),
+    birth: document.getElementById('f_birth'),
+    addr: document.getElementById('f_addr'),
+    mbti: document.getElementById('f_mbti')
+  }
+
+  // 보기모드 값 채우기용 원본 데이터
+  let profileData = {
+    avatar: pfAvatar.src,
+    nickname: '소금빵',
+    name: '김하늘',
+    username: 'haneul_k',
+    email: 'saltbread@example.com',
+    gender: '여성',
+    birth: '2003-03-21',
+    addr: '서울특별시 영등포구 여의대로 00',
+    mbti: 'INFP'
+  };
+
+  function fillFormFromData(){
+    f.nickname.value = profileData.nickname;
+    f.name.value     = profileData.name;
+    f.username.value = profileData.username;
+    f.password.value = '';
+    f.email.value    = profileData.email;
+    f.gender.value   = profileData.gender;
+    f.birth.value    = profileData.birth;
+    f.addr.value     = profileData.addr;
+    f.mbti.value     = profileData.mbti;
+    pfPreview.src    = profileData.avatar;
+  }
+  function fillViewFromData(){
+    document.getElementById('v_name').textContent = profileData.name;
+    document.getElementById('v_username').textContent = profileData.username;
+    document.getElementById('v_maskpw').textContent = '********';
+    document.getElementById('v_email').textContent = profileData.email;
+    document.getElementById('v_gender').textContent = profileData.gender;
+    document.getElementById('v_birth').textContent = profileData.birth;
+    document.getElementById('v_addr').textContent = profileData.addr;
+    document.getElementById('v_mbti').textContent = profileData.mbti;
+    pfAvatar.src = profileData.avatar;
+    pfNickname.textContent = profileData.nickname;
+    pfEmail.textContent = profileData.email;
+  }
+  fillViewFromData();
+
+  btnEdit?.addEventListener('click', ()=>{
+    fillFormFromData();
+    viewMode.classList.add('d-none');
+    editMode.classList.remove('d-none');
+    profileHead.classList.add('d-none'); // 수정 중 상단 라인 숨김
+    saveAlert.classList.add('d-none');
+  });
+  btnCancel?.addEventListener('click', ()=>{
+    editMode.classList.add('d-none');
+    viewMode.classList.remove('d-none');
+    profileHead.classList.remove('d-none'); // 복귀 시 표시
+  });
+
+  pfFile?.addEventListener('change', (e)=>{
+    const file = e.target.files?.[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => { pfPreview.src = String(ev.target?.result || ''); };
+    reader.readAsDataURL(file);
+  });
+
+  editMode?.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    if(!f.name.value || !f.username.value || !f.email.value || !f.gender.value || !f.birth.value || !f.addr.value){
+      editMode.classList.add('was-validated'); return;
+    }
+    // 로컬 업데이트
+    profileData = {
+      avatar: pfPreview.src,
+      nickname: f.nickname.value.trim(),
+      name: f.name.value.trim(),
+      username: f.username.value.trim(),
+      email: f.email.value.trim(),
+      gender: f.gender.value,
+      birth: f.birth.value,
+      addr: f.addr.value.trim(),
+      mbti: f.mbti.value.trim() || ''
+    };
+    fillViewFromData();
+    editMode.classList.add('d-none');
+    viewMode.classList.remove('d-none');
+    profileHead.classList.remove('d-none'); // 저장 후 라인 복귀
+    saveAlert.classList.remove('d-none');
+    setTimeout(()=>saveAlert.classList.add('d-none'), 2400);
+  });
+
+  /* ===== 내 활동 – 리포트 데이터 & 차트 (막대 + 요일 막대) ===== */
+  const reportData = {
+    similar_keywords: [
+      {name:'하이킹', count:128},
+      {name:'사진산책', count:109},
+      {name:'보드게임', count:97},
+      {name:'홈쿠킹', count:76},
+      {name:'와인클래스', count:65},
+      {name:'클라이밍', count:54}
+    ],
+    // 요일별 활동 집계 (월~일)
+    activity_week: [
+      {name:'월', count:146},
+      {name:'화', count:137},
+      {name:'수', count:125},
+      {name:'목', count:150},
+      {name:'금', count:195},
+      {name:'토', count:170},
+      {name:'일', count:122}
+    ]
+  };
+
+  // 공용 SVG 바 차트
+  function renderBarChart(elId, data, options){
+    const el = document.getElementById(elId); if(!el) return;
+    const max = Math.max(...data.map(d=>d.count), 1);
+    const barH = options?.barH ?? 28, gap = options?.gap ?? 10, pad = 16;
+    const labelW = options?.labelW ?? 94, valueW = options?.valueW ?? 46;
+    const width = Math.max(420, el.clientWidth || 420);
+    const plotW = Math.max(120, width - pad*2 - labelW - valueW);
+    const height = pad*2 + data.length * (barH + gap) - gap;
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS,'svg');
+    svg.setAttribute('width', width);
+    svg.setAttribute('height', height);
+    svg.setAttribute('role','img');
+
+    const bg = document.createElementNS(svgNS,'rect');
+    bg.setAttribute('x','0'); bg.setAttribute('y','0');
+    bg.setAttribute('width', width); bg.setAttribute('height', height);
+    bg.setAttribute('fill','transparent');
+    svg.appendChild(bg);
+
+    data.forEach((d, i)=>{
+      const y = pad + i * (barH + gap);
+      const tLabel = document.createElementNS(svgNS,'text');
+      tLabel.setAttribute('x', pad);
+      tLabel.setAttribute('y', y + barH*0.7);
+      tLabel.setAttribute('font-size','12');
+      tLabel.setAttribute('fill','#374151');
+      tLabel.textContent = d.name;
+      svg.appendChild(tLabel);
+
+      const barW = Math.round((d.count / max) * plotW);
+      const bar = document.createElementNS(svgNS,'rect');
+      bar.setAttribute('x', pad + labelW);
+      bar.setAttribute('y', y);
+      bar.setAttribute('width', barW);
+      bar.setAttribute('height', barH);
+      bar.setAttribute('rx','6');
+      bar.setAttribute('fill','var(--surface)');
+      bar.setAttribute('stroke','#dfe3e7');
+      svg.appendChild(bar);
+
+      const tVal = document.createElementNS(svgNS,'text');
+      tVal.setAttribute('x', pad + labelW + plotW + 8);
+      tVal.setAttribute('y', y + barH*0.7);
+      tVal.setAttribute('font-size','12');
+      tVal.setAttribute('fill','#6b7280');
+      tVal.textContent = d.count;
+      svg.appendChild(tVal);
+    });
+
+    el.innerHTML='';
+    el.appendChild(svg);
+  }
+
+  // 초기 렌더 & 리사이즈 대응
+  function renderCharts(){
+    renderBarChart('barSimilar', reportData.similar_keywords);
+    renderBarChart('barWeek', reportData.activity_week, { labelW: 44, barH: 26, gap: 8 });
+  }
+  renderCharts();
+  window.addEventListener('resize', renderCharts);
+
+  /* ===== 피드: 더보기/좋아요 토글 ===== */
+  document.addEventListener('click', (e)=>{
+    const more = e.target.closest('[data-more]');
+    if(more){
+      e.preventDefault();
+      const text = more.previousElementSibling;
+      if(text && text.classList.contains('feed-text')){
+        const expanded = text.classList.toggle('expanded');
+        more.textContent = expanded ? '접기' : '더보기';
+      }
+    }
+    const like = e.target.closest('[data-like]');
+    if(like){
+      const countEl = like.querySelector('.like-count');
+      const isActive = like.classList.toggle('active');
+      const cur = parseInt(countEl.textContent || '0', 10) || 0;
+      countEl.textContent = isActive ? cur + 1 : Math.max(0, cur - 1);
+    }
+  });
+
+  /* ===== 찜 해제 → 카드 제거 ===== */
+  document.addEventListener('click', (e)=>{
+    const btn = e.target.closest('[data-unlike]');
+    if(!btn) return;
+    const card = btn.closest('.like-card');
+    const col = btn.closest('.col-12, .col-md-6, .col-lg-4') || card?.parentElement;
+    if(card){
+      card.classList.add('fade-out');
+      setTimeout(()=>{
+        if(col) col.remove();
+        else card.remove();
+      }, 220);
+    }
+  });
+
+  /* ===== 네비와 동일 가로폭 동기화 ===== */
+  function syncSpanToNav(el){
+    const cat = document.querySelector('.bar-lg .category-trigger');
+    const icons = document.querySelector('.bar-lg .icon-row');
+    const container = el.closest('.container');
+    if (!el || !cat || !icons || !container) return;
+
+    const isDesktop = window.innerWidth >= 992;
+    if (!isDesktop){
+      el.style.width = '';
+      el.style.marginLeft = '';
+      el.style.marginRight = '';
+      return;
+    }
+
+    const leftEdge = cat.getBoundingClientRect().left;
+    const rightEdge = icons.getBoundingClientRect().right;
+    const span = Math.max(0, (rightEdge - leftEdge) - 8);
+    const contRect = container.getBoundingClientRect();
+    const marginLeft = Math.max(0, leftEdge - contRect.left) + 4;
+    el.style.width = span + 'px';
+    el.style.marginLeft = marginLeft + 'px';
+    el.style.marginRight = '';
+  }
+  function syncAllSpans(){
+    ['mpBreadcrumb','mpTabs','mpViewport','mpFooter'].forEach(id=>{
+      const node = document.getElementById(id);
+      if (node) syncSpanToNav(node);
+    });
+  }
+  window.addEventListener('load', syncAllSpans);
+  window.addEventListener('resize', syncAllSpans);
+  if (document.fonts?.ready) document.fonts.ready.then(syncAllSpans);
+
+  /* ===== Instagram 핸들 ===== */
+  const IG_HANDLE = 'yourbrand';
+  const igLink = document.getElementById('igLink');
+  if (igLink){
+    igLink.href = `https://instagram.com/${IG_HANDLE}`;
+    igLink.textContent = `@${IG_HANDLE}`;
+  }
+</script>
+</body>
+</html> 
