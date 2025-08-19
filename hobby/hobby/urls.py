@@ -1,10 +1,11 @@
-# hobby/urls.py
 from django.contrib import admin
 from django.urls import path
 from core import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    # Pages
     path('', views.main, name='main'),
     path('community/', views.community, name='community'),
     path('reviews/new/', views.review_new, name='review_new'),
@@ -15,7 +16,7 @@ urlpatterns = [
     path('boards/<int:pk>/edit/', views.board_edit, name='board_edit'),
     path('notice/<int:pk>/', views.notice_detail, name='notice_detail'),
 
-    # API(예: 메인 BEST 크루/커뮤니티 목록) – 선택
+    # APIs
     path('api/crews/best/', views.best_crews),
     path('api/posts/recent/', views.recent_posts),
 ]
