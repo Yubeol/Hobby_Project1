@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HOBBY</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<!-- Font Awesome (푸터 인스타 아이콘용) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+<style>
+  /* ===== 공통 ===== */
+  :root{
+    /* 포인트/파스텔 */
+    --info:#98A7AC;          /* 링크 hover 등 */
+    --muted-bg:#AAD9CD;      /* hover: 민트 파스텔 */
+  }
+  body{
+    font-family:
+      'Noto Sans KR',
+      'Apple SD Gothic Neo',
+      'Malgun Gothic',
+      'Segoe UI', Roboto, Arial, sans-serif;
+  }
+  .top-banner{ background:#f8f9fa; font-size:.9rem; border-bottom:1px solid #eee; }
+  .top-banner a{ color:#333; text-decoration:none; margin-left:15px; }
+
+  /* ✅ 데스크탑에서는 상단 배너 숨기고(navbar로 통합) */
+  @media (min-width:992px){
+    .top-banner{ display:none !important; }
+  }
+
+  /* 로고(HOBBY) — 유지 */
+  .navbar-brand{
+    font-weight:700;
+    color:#111 !important;
+    font-size:2rem;
+    font-family:'Poppins', sans-serif;
+  }
+
+  .divider{ width:1px; height:24px; background:#ddd; margin:0 12px; }
+  .hero-wrap{ background:#fff; border-bottom:1px solid rgba(0,0,0,.04); }
+
+  /* ===== 배너 영역 ===== */
+  .hero-wrap .carousel-viewport{
+    height:120px;
+    border-radius:16px;
+    border:none;
+    overflow:hidden;
+    background:#fff;
+    position:relative;
+    margin-left:auto; margin-right:auto; /* 중앙 정렬 */
+  }
+  @media (max-width:576.98px){
+    .hero-wrap .carousel-viewport{ height:100px; }
+  }
+  .hero-wrap .carousel-inner{ height:100%; }
+  .hero-wrap .carousel-item{ height:100%; }
+
+  .hero-wrap .banner-box{
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+    position:relative;
+  }
+  /* 배너 이미지를 '가득 채우기' */
+  .hero-wrap .banner-img{
+    width:100% !important;
+    height:100% !important;
+    object-fit:cover !important;
+    object-position:center;
+    display:block;
+    transition:all .3s ease;
+  }
+
+  .carousel-control-prev, .carousel-control-next{ width:42px; }
+  .carousel-indicators [data-bs-target]{ width:8px; height:8px; border-radius:50%; }
+
+  /* ===== 화살표 오버레이 ===== */
+  .controls-overlay{
+    position:absolute; inset:0; z-index:20; pointer-events:none;
+  }
+  .controls-overlay .carousel-control-prev,
+  .controls-overlay .carousel-control-next{
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:44px!important; height:44px; background:transparent;
+    pointer-events:auto; border:0;
+  }
+  .controls-overlay .carousel-control-prev-icon,
+  .controls-overlay .carousel-control-next-icon{
+    background-size:100% 100%;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,.75));
+  }
+
+  /* 배너와 헤더 간격 */
+  section.hero-wrap{ padding-top:1rem!important; padding-bottom:1rem!important; }
+
+  /* ===== 헤더/카테고리 — 유지 ===== */
+  @media (min-width:992px){ .bar-lg{display:flex!important} .bar-sm{display:none!important} }
+  @media (max-width:991.98px){ .bar-lg{display:none!important} .bar-sm{display:flex!important} }
+  .search-wrap{ position:relative; flex:1; max-width:480px; }
+  .search-bar{ width:100%; border-radius:50px; transition:background .12s, border-color .12s; }
+  .search-bar:hover,
+  .search-bar:focus{
+    box-shadow:none;
+  }
+  .icon-row{ display:flex; align-items:center; gap:16px; }
+  .nav-icon{ position:relative; margin:0 6px; cursor:pointer; }
+  .nav-icon span{
+    position:absolute; bottom:-22px; left:50%; transform:translateX(-50%);
+    background:#333; color:#fff; padding:2px 6px; border-radius:4px; font-size:12px;
+    white-space:nowrap; opacity:0; transition:opacity .15s;
+  }
+  .nav-icon:hover span{ opacity:1; }
+
+  /* ✅ PC 상단 텍스트 링크(회원가입/로그인/공지사항) */
+  .auth-links{ gap:4px; }
+  .auth-links .auth-link{
+    text-decoration:none; font-size:.95rem; color:#374151; padding:0 6px;
+  }
+  .auth-links .auth-link:hover{ text-decoration:underline; }
+  .auth-links .auth-div{ color:#c9ccd2; }
+
+  .category-trigger{ position:relative; }
+  .mega-panel{
+    position:absolute; top:100%; left:50%; transform:translateX(-50%);
+    width:auto; max-width:calc(100vw - 32px);
+    margin-top:10px; padding:10px;
+    background:#fff; border:1px solid #e5e7eb; border-radius:14px;
+    box-shadow:0 16px 36px rgba(0,0,0,.08);
+    display:none; z-index:2000;
+  }
+  .category-trigger-sm{ position:relative; }
+  .mega-panel.mobile{
+    position:absolute; top:calc(100% + 8px); left:0; transform:none; margin-top:0;
+    width:max(260px, min(640px, 92vw)); max-width:92vw; padding:10px;
+  }
+
+  :root{
+    --chip-h: 44px; --chip-pad-x: 10px; --chip-radius: 10px;
+    --chip-fs: 13px; --chip-weight: 500;
+    --chip-border: #dfe3e7; --chip-border-hover:#d4d8dd;
+    --chip-bg:#fff; --chip-bg-hover:#fafafa;
+    --badge-size: 22px; --badge-fs: 14px;
+    --chip-col-w: 160px; --chip-gap-x: 6px; --chip-gap-y: 6px;
+  }
+  .mega-grid{
+    display:grid; grid-template-columns:repeat(3, var(--chip-col-w));
+    gap:var(--chip-gap-y) var(--chip-gap-x); justify-content:center;
+  }
+  .cat-chip{
+    height:var(--chip-h); border:1px solid var(--chip-border); background:var(--chip-bg);
+    border-radius:var(--chip-radius); display:flex; align-items:center; gap:8px;
+    padding:0 var(--chip-pad-x); width:100%; box-sizing:border-box; cursor:pointer;
+    transition:background-color .12s, border-color .12s, color .12s;
+    justify-content:center; color:#4b5563;
+  }
+  /* ✅ 카테고리 칩 Hover → 민트 파스텔 */
+  .cat-chip:hover{
+    background: color-mix(in srgb, var(--muted-bg) 22%, white);
+    border-color: var(--chip-border-hover);
+    color:#333;
+  }
+  /* (요청) 활성 색상 제거: .cat-chip.active 스타일 없음 */
+
+  .cat-title{ font-size:var(--chip-fs); font-weight:var(--chip-weight); color:inherit; letter-spacing:-.2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1; }
+  .chip-badge{
+    width:var(--badge-size); height:var(--badge-size); border-radius:8px; display:grid; place-items:center; font-size:var(--badge-fs);
+    background:#f6f7f8; border:1px solid #eceff2; color:#374151; flex:0 0 auto;
+    transition:background-color .12s, border-color .12s, color .12s;
+  }
+
+  /* 이모지 깨짐 방지 */
+  .chip-badge, .cat-title{
+    font-family:
+      inherit,
+      'Apple Color Emoji',
+      'Segoe UI Emoji',
+      'Noto Color Emoji';
+  }
+
+  /* ======= 베스트 크루 전용 스타일 ======= */
+  .best-crew-wrap{ background:#fff; margin-top:18px; }
+  .bc-header{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:12px; margin-bottom:10px;
+  }
+  .bc-title{ font-weight:700; font-size:1.35rem; letter-spacing:-.2px; }
+  .bc-more{ text-decoration:none; color:#6b7280; font-size:.9rem; }
+
+  .bc-viewport{ width:100%; }
+
+  .bc-grid .crew-card{
+    border:1px solid #eceef2; border-radius:14px; overflow:hidden; background:#fff;
+    transition:transform .12s ease, box-shadow .12s ease;
+    position:relative; /* stretched-link용 - 추가 */
+  }
+  .bc-grid .crew-card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(0,0,0,.05);
+  }
+  .crew-thumb{ position:relative; aspect-ratio: 16/9; background:#f8f9fb; }
+  .crew-thumb img{
+    position:absolute; inset:0; width:100%; height:100%;
+    object-fit:cover; object-position:center;
+  }
+  .bc-like{
+    position:absolute; left:10px; bottom:10px;
+    width:34px; height:34px; border-radius:50%;
+    background:#ffffff; border:1px solid rgba(0,0,0,.08);
+    display:grid; place-items:center; cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease;
+  
+    z-index:3;
+  }
+  .bc-like .bi{ font-size:1rem; }
+  .bc-like:hover{ transform:scale(1.04); box-shadow:0 6px 12px rgba(0,0,0,.1); }
+  .bc-like .bi-heart-fill{ display:none; }
+  .bc-like.active .bi-heart{ display:none; }
+  .bc-like.active .bi-heart-fill{ display:inline-block; color:#ef4444; }
+
+  .crew-body{ padding:10px 12px 12px; }
+  .crew-meta{ color:#6b7280; font-size:.9rem; }
+  .crew-title{ margin:4px 0 6px; font-weight:600; font-size:1rem; color:#111; line-height:1.25; }
+  .crew-time{ color:#6b7280; display:flex; align-items:center; gap:6px; font-size:.9rem; }
+  .crew-time .bi{ font-size:.95rem; }
+
+  /* ===== 모바일 2열 ===== */
+  @media (max-width:576.98px){
+    .bc-grid > [class*="col-"]{
+      max-width: 50%;
+      flex: 0 0 50%;
+      margin-left: 0;
+      margin-right: 0;
+    }
+    .crew-title{ font-size:.95rem; }
+    .crew-meta, .crew-time{ font-size:.85rem; }
+    .bc-header{ padding:0 6px; }
+  }
+
+  /* ===== 커뮤니티 ===== */
+  .community-wrap{ background:#fff; margin-top:18px; }
+  .cm-title{ font-weight:700; font-size:1.35rem; letter-spacing:-.2px; }
+  .cm-more{ text-decoration:none; color:#6b7280; font-size:.9rem; }
+
+  /* 상단 탭 */
+  .cm-top{
+    display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px;
+  }
+  .cm-tabs{ display:flex; gap:8px; align-items:center; }
+  .cm-tab{
+    border:none; background:transparent; color:#374151;
+    padding:6px 10px; border-radius:10px; font-size:.95rem; line-height:1; cursor:pointer;
+    transition:color .12s ease, background-color .12s ease;
+  }
+  .cm-tab.active{
+    color:#111;
+    background:#f5f6f8;
+    font-weight:600;
+  }
+
+  /* 컨텐츠 래퍼 높이 고정(전환 시 세로길이 유지) */
+  #cmContent{ position:relative; }
+  #cmContent > .tab-pane{ transition:opacity .12s ease; }
+  #cmContent > .tab-pane.hidden{ opacity:0; pointer-events:none; position:absolute; inset:0; }
+
+  /* 후기 카드 */
+  .feed-card{
+    border:1px solid #eceef2; border-radius:14px; overflow:hidden; background:#fff;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .feed-card:hover{ transform:translateY(-2px); box-shadow:0 8px 20px rgba(0,0,0,.05); }
+  .feed-thumb{ position:relative; aspect-ratio: 16/9; background:#f8f9fb; }
+  .feed-thumb img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; }
+  .feed-body{ padding:12px; }
+  .feed-meta{ color:#6b7280; font-size:.9rem; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .feed-title{ margin:6px 0 6px; font-weight:600; font-size:1rem; color:#111; line-height:1.3; }
+  .feed-text{ color:#374151; font-size:.95rem; }
+  .feed-reviewer{ color:#6b7280; font-size:.9rem; }
+
+  /* 자유게시판: 일자형 리스트 */
+  .board-grid{ row-gap:10px; }
+  .board-row{
+    border:1px solid #eceef2; border-radius:12px; background:#fff;
+    padding:10px 12px; height:100%;
+    display:flex; flex-direction:column; justify-content:center;
+    position:relative;
+  }
+  .board-title{ margin:0; font-weight:600; color:#111; font-size:0.98rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .board-excerpt{ margin:4px 0 0; color:#4b5563; font-size:0.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .board-meta{ margin-top:4px; font-size:.83rem; color:#6b7280; }
+  .stretched-link{ position:static; }
+
+  /* 자유게시판: 화면 줄이면 2개씩 */
+  @media (min-width:992px){
+    .board-col{ flex:0 0 100%; max-width:100%; }
+  }
+  @media (max-width:991.98px){
+    .board-col{ flex:0 0 50%; max-width:50%; }
+  }
+
+  /* ====== 푸터(Instagram Box – Light) ====== */
+  :root{
+    --line:#f0f0f0;
+    --ink:#555;
+    --muted:#888;
+    --bg:#fff;
+    --card:#f8f8f8;
+    --ft-maxw:1080px;
+  }
+  .footer-wrap{ background:#fff; margin-top:18px; }
+  .footer-viewport{ width:100%; }
+  .footer-box{
+    margin:24px 0 40px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:20px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:16px;
+    max-width:100%; /* ← ONLY CHANGE: match container span */
+    margin-left:auto; margin-right:auto;
+    color:var(--ink);
+  }
+  .footer-box .ft-title{
+    font-weight:600;
+    margin-bottom:6px;
+    display:flex;align-items:center;gap:6px;
+    color:#444;
+    font-size:15px;
+    text-transform:lowercase;
+  }
+  .footer-box a{
+    display:block;
+    color:var(--muted);
+    text-decoration:none;
+    margin:4px 0;
+    font-size:14px;
+    transition:color 0.2s ease;
+  }
+  .footer-box a:hover{ color:#555; text-decoration:underline; }
+  .footer-box .ft-title i.fa-instagram{ color:#E4405F; opacity:0.8; }
+  a:focus-visible{outline:2px solid #aaa;outline-offset:2px}
+
+  /* ===== Search Overlay (인기/최근 검색어) ===== */
+  .search-overlay{
+    position:absolute; left:0; right:0; top:calc(100% + 8px);
+    background:#fff; border:1px solid #eceef2; border-radius:12px;
+    padding:12px; z-index:2050; display:none;
+    box-shadow:0 8px 24px rgba(0,0,0,.08);
+  }
+  .search-overlay[aria-hidden="false"]{ display:block; }
+  .so-section + .so-section{ margin-top:10px; }
+  .so-title{ font-weight:600; font-size:.95rem; color:#374151; margin-bottom:6px; }
+  .so-row{ display:flex; align-items:center; gap:8px; }
+  .so-chips{ display:flex; flex-wrap:wrap; gap:8px; }
+  .so-chip{
+    display:inline-flex; align-items:center; gap:6px;
+    padding:6px 10px; background:#fff; border:1px solid #e5e7eb;
+    border-radius:999px; font-size:.92rem; color:#374151; cursor:pointer;
+    transition:background .12s, border-color .12s, color .12s;
+  }
+  /* ✅ 검색 칩 Hover → 민트 파스텔 */
+  .so-chip:hover{
+    background: color-mix(in srgb, var(--muted-bg) 35%, white);
+    border-color: #d7dde3;
+    color:#333;
+  }
+  /* (요청) 검색 칩 활성 색상 제거: .so-chip.active 스타일 없음 */
+
+  .so-chip .del{
+    display:inline-grid; place-items:center; width:18px; height:18px;
+    border-radius:50%; border:1px solid #e5e7eb; font-size:12px; line-height:1;
+    background:#fff; cursor:pointer;
+  }
+  .so-chip .del:hover{ background:#fafafa; }
+  .so-chip.kb-focus{ outline:2px solid #98A7AC; outline-offset:2px; }
+  .so-clear-all{ font-size:.85rem; color:#6b7280; }
+  .so-clear-all:hover{ color:#374151; text-decoration:underline; }
+
+/* === Community tabs: match community.html look === */
+.cm-tabs .cm-tab{
+  border:0; background:#fff; color:#374151;
+  border-radius:10px; padding:8px 14px; font-size:.98rem; line-height:1;
+}
+.cm-tabs .cm-tab:hover{
+  background: color-mix(in srgb, var(--surface, #CDDAD8) 30%, white);
+}
+.cm-tabs .cm-tab.active{
+  color: var(--primary-strong, #C79A8C);
+  background: color-mix(in srgb, var(--surface, #CDDAD8) 55%, white);
+  font-weight:700;
+}
+
+
+  /* ===== 자유게시판(community.html 스타일 매칭) ===== */
+  .board-list{ border:1px solid #eceef2; border-radius:14px; overflow:hidden; background:#fff; }
+  .board-item{ display:flex; gap:12px; padding:14px 16px; align-items:center; border-top:1px solid #f1f2f6; }
+  .board-item:first-child{ border-top:0; }
+  .board-thumb{ flex:0 0 60px; height:60px; border-radius:10px; overflow:hidden; background:#f0f2f4; }
+  .board-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .board-title{ margin:0; font-weight:600; color:#111; }
+  .board-excerpt{ color:#374151; margin:.25rem 0 .35rem; }
+  .board-meta{ color:#6b7280; font-size:.9rem; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .badge-photo{ border:1px solid #e5e7eb; background:#fff; color:#374151; border-radius:999px; padding:2px 8px; font-size:.8rem; }
+
+  /* ===== 자유게시판(community.html 스타일 동일) ===== */
+  .board-list{ border:1px solid #eceef2; border-radius:14px; overflow:hidden; background:#fff; }
+  .board-item{ display:flex; gap:12px; padding:14px 16px; align-items:center; border-top:1px solid #f1f2f6; }
+  .board-item:first-child{ border-top:0; }
+  .board-thumb{ flex:0 0 60px; height:60px; border-radius:10px; overflow:hidden; background:#f0f2f4; }
+  .board-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .board-title{ margin:0; font-weight:600; color:#111; }
+  .board-excerpt{ color:#374151; margin:.25rem 0 .35rem; }
+  .board-meta{ color:#6b7280; font-size:.9rem; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .badge-photo{ border:1px solid #e5e7eb; background:#fff; color:#374151; border-radius:999px; padding:2px 8px; font-size:.8rem; }
+
+  /* ✅ (요청) 자유게시판 제목 링크를 항상 검정색으로 고정 */
+  .board-title a,
+  .board-title a:visited,
+  .board-title a:hover{
+    color:#000 !important;
+    text-decoration:none;
+  }
+</style>
+</head>
+<body>
+  <!-- 상단 작은 배너 -->
+  <div class="top-banner text-end py-1 px-3">
+    <a href="/accounts/signup/">회원가입</a><a href="/accounts/login/">로그인</a><a href="/community/?tab=notice">공지사항</a>
+  </div>
+
+  <!-- ===== 데스크톱 헤더 ===== -->
+  <nav class="navbar bg-white border-bottom sticky-top bar-lg">
+    <div class="container d-flex justify-content-center">
+      <div class="d-flex align-items-center justify-content-center gap-3 w-100 flex-wrap">
+        <div class="category-trigger">
+          <button id="btnCatDesk" class="btn btn-link text-dark fs-4" data-bs-toggle="tooltip" data-bs-placement="bottom" title="카테고리" aria-expanded="false">
+            <i class="bi bi-grid"></i>
+          </button>
+          <div id="panelDesk" class="mega-panel" role="menu" aria-label="카테고리">
+            <div id="gridDesk" class="mega-grid"></div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <a class="navbar-brand" href="/">HOBBY</a>
+
+        <!-- 검색 오버레이/자동완성 차단 -->
+        <form class="d-flex search-wrap" autocomplete="off">
+          <input type="text" style="position:absolute; left:-9999px; top:-9999px; height:0; width:0; opacity:0;" aria-hidden="true" tabindex="-1">
+          <input
+            id="globalSearch"
+            class="form-control search-bar"
+            type="search"
+            placeholder="지금 생각나는 취미를 검색하세요"
+            aria-label="Search"
+            name="hobby_search"
+            autocomplete="off"
+            autocapitalize="off"
+            autocorrect="off"
+            spellcheck="false"
+            enterkeyhint="search"
+            inputmode="search"
+          >
+          <!-- ▼ 검색 오버레이 -->
+          <div id="searchOverlay" class="search-overlay shadow-sm" role="dialog" aria-label="검색 제안" aria-hidden="true">
+            <div class="so-section">
+              <div class="so-title">인기 검색어</div>
+              <div class="so-chips" id="popularChips"></div>
+            </div>
+            <div class="so-section">
+              <div class="so-row">
+                <div class="so-title mb-0">최근 검색어</div>
+                <button class="btn btn-sm btn-link p-0 ms-auto so-clear-all" type="button" id="clearRecent" aria-label="최근 검색어 모두 삭제">전체삭제</button>
+              </div>
+              <div class="so-chips" id="recentChips"></div>
+            </div>
+          </div>
+          <!-- ▲ 검색 오버레이 끝 -->
+        </form>
+
+        <div class="icon-row">
+          <div class="nav-icon"><i class="bi bi-people fs-4"></i><span>크루</span></div>
+          <div class="nav-icon"><i class="bi bi-bell fs-4"></i><span>알림</span></div>
+          <div class="nav-icon"><i class="bi bi-heart fs-4"></i><span>찜</span></div>
+          <div class="nav-icon"><i class="bi bi-person fs-4"></i><span>마이</span></div>
+
+          <!-- ✅ PC: 텍스트 링크(회원가입/로그인/공지사항) 통합 -->
+          <div class="auth-links d-none d-lg-flex align-items-center ms-2">
+            <a class="auth-link" href="/accounts/signup/">회원가입</a>
+            <span class="auth-div">|</span>
+            <a class="auth-link" href="/accounts/login/">로그인</a>
+            <span class="auth-div">|</span>
+            <a class="auth-link" href="/community/?tab=notice">공지사항</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== 모바일 헤더 ===== -->
+  <nav class="navbar bg-white border-bottom sticky-top bar-sm w-100" id="mobileBar">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
+        <div class="category-trigger-sm">
+          <button id="btnCatM" class="btn btn-link text-dark fs-4 me-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="카테고리" aria-expanded="false">
+            <i class="bi bi-grid"></i>
+          </button>
+          <div id="panelM" class="mega-panel mobile" role="menu" aria-label="카테고리 (모바일)">
+            <div id="gridM" class="mega-grid"></div>
+          </div>
+        </div>
+        <a class="navbar-brand ms-1" href="/">HOBBY</a>
+      </div>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenuSm" aria-controls="navMenuSm" aria-expanded="false">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+    <div class="collapse navbar-collapse bg-white" id="navMenuSm">
+      <div class="p-3 border-bottom">
+        <div class="input-group" autocomplete="off">
+          <input type="text" style="position:absolute; left:-9999px; top:-9999px; height:0; width:0; opacity:0;" aria-hidden="true" tabindex="-1">
+          <input
+            id="globalSearchSm"
+            type="search"
+            class="form-control"
+            placeholder="취미 검색…"
+            aria-label="Search"
+            name="hobby_search_sm"
+            autocomplete="off"
+            autocapitalize="off"
+            autocorrect="off"
+            spellcheck="false"
+            enterkeyhint="search"
+            inputmode="search"
+          >
+          <button class="btn btn-outline-secondary" type="button"><i class="bi bi-search"></i></button>
+        </div>
+      </div>
+      <ul class="navbar-nav p-2 gap-1">
+        <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-people me-2"></i>크루</a></li>
+        <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-bell me-2"></i>알림</a></li>
+        <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-heart me-2"></i>찜</a></li>
+        <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-person me-2"></i>마이</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== 배너(슬라이드) ===== -->
+  <section class="hero-wrap py-4">
+    <div class="container">
+      <div id="heroCarousel" class="carousel slide"
+           data-bs-ride="carousel" data-bs-interval="3800"
+           data-bs-touch="true" data-bs-wrap="true">
+
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="슬라이드 1"></button>
+          <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="슬라이드 2"></button>
+          <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="슬라이드 3"></button>
+          <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="3" aria-label="슬라이드 4"></button>
+          <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="4" aria-label="슬라이드 5"></button>
+          <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="5" aria-label="슬라이드 6"></button>
+          <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="6" aria-label="슬라이드 7"></button>
+        </div>
+
+        <div class="carousel-inner carousel-viewport">
+          <div class="carousel-item active">
+            <div class="banner-box">
+              <a href="#banner1" class="stretched-link"><img class="banner-img" src="image/1.png" alt="Hobby Banner 1"></a>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="banner-box">
+              <a href="#banner2" class="stretched-link"><img class="banner-img" src="image/2.png" alt="Hobby Banner 2"></a>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="banner-box">
+              <a href="#banner3" class="stretched-link"><img class="banner-img" src="image/3.png" alt="Hobby Banner 3 "></a>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="banner-box">
+              <a href="#banner4" class="stretched-link"><img class="banner-img" src="image/4.png" alt="Hobby Banner 4"></a>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="banner-box">
+              <a href="#banner5" class="stretched-link"><img class="banner-img" src="image/5.png" alt="Hobby Banner 5"></a>
+            </div>
+          </div>
+
+          <div class="carousel-item">
+            <div class="banner-box">
+              <a href="#banner6" class="stretched-link">
+                <img class="banner-img" src="image/6.png" alt="Hobby Banner 6">
+              </a>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="banner-box">
+              <a href="#banner7" class="stretched-link">
+                <img class="banner-img" src="image/7.png" alt="Hobby Banner 7">
+              </a>
+            </div>
+          </div>
+
+          <!-- 화살표 오버레이 -->
+          <div class="controls-overlay">
+            <button id="ctrlPrev" class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev" aria-label="이전">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">이전</span>
+            </button>
+            <button id="ctrlNext" class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next" aria-label="다음">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">다음</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BEST 크루 섹션 (4개) ===== -->
+  <section class="best-crew-wrap py-3">
+    <div class="container">
+      <div id="bcViewport" class="bc-viewport mx-auto">
+        <div class="bc-header">
+          <div class="bc-title">BEST 크루</div>
+          <a class="bc-more" href="/crews/">더보기</a>
+        </div>
+
+        <div class="row g-3 bc-grid">
+          <!-- 1 -->
+          <div class="col-6 col-md-6 col-lg-3">
+            <article class="crew-card h-100">
+              <!-- ✅ 카드 전체 클릭 가능 -->
+              <a href="#crew1Detail" class="stretched-link" aria-label="크루 상세보기: 주말 드로잉 & 갤러리 투어"></a>
+              <div class="crew-thumb">
+                <img src="https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?q=80&w=1200&auto=format&fit=crop" alt="문화예술 클래스">
+                <button class="bc-like" type="button" aria-label="찜" data-like-id="crew1">
+                  <i class="bi bi-heart"></i>
+                  <i class="bi bi-heart-fill"></i>
+                </button>
+              </div>
+              <div class="crew-body">
+                <div class="crew-meta">영등포구 · 문화예술</div>
+                <h3 class="crew-title">🎨 주말 드로잉 & 갤러리 투어</h3>
+                <div class="crew-time"><i class="bi bi-calendar-event"></i><span>25.8.23(토) 오후 2:00</span></div>
+              </div>
+            </article>
+          </div>
+          <!-- 2 -->
+          <div class="col-6 col-md-6 col-lg-3">
+            <article class="crew-card h-100">
+              <!-- ✅ 카드 전체 클릭 가능 -->
+              <a href="#crew2Detail" class="stretched-link" aria-label="크루 상세보기: 오늘부터 글쓰기 — 북클럽 & 라이트업"></a>
+              <div class="crew-thumb">
+                <img src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=1200&auto=format&fit=crop" alt="자기계발 북클럽">
+                <button class="bc-like" type="button" aria-label="찜" data-like-id="crew2">
+                  <i class="bi bi-heart"></i>
+                  <i class="bi bi-heart-fill"></i>
+                </button>
+              </div>
+              <div class="crew-body">
+                <div class="crew-meta">구로구 · 자기계발</div>
+                <h3 class="crew-title">📚 오늘부터 글쓰기 — 북클럽 & 라이트업</h3>
+                <div class="crew-time"><i class="bi bi-calendar-event"></i><span>25.8.30(토) 오후 6:30</span></div>
+              </div>
+            </article>
+          </div>
+          <!-- 3 -->
+          <div class="col-6 col-md-6 col-lg-3">
+            <article class="crew-card h-100">
+              <!-- ✅ 카드 전체 클릭 가능 -->
+              <a href="#crew3Detail" class="stretched-link" aria-label="크루 상세보기: 제철 식재료로 만드는 홈쿠킹"></a>
+              <div class="crew-thumb">
+                <img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1200&auto=format&fit=crop" alt="요리 취미모임">
+                <button class="bc-like" type="button" aria-label="찜" data-like-id="crew3">
+                  <i class="bi bi-heart"></i>
+                  <i class="bi bi-heart-fill"></i>
+                </button>
+              </div>
+              <div class="crew-body">
+                <div class="crew-meta">영등포구 · 요리</div>
+                <h3 class="crew-title">🍳 제철 식재료로 만드는 홈쿠킹</h3>
+                <div class="crew-time"><i class="bi bi-calendar-event"></i><span>25.9.4(목) 오후 7:30</span></div>
+              </div>
+            </article>
+          </div>
+          <!-- 4 -->
+          <div class="col-6 col-md-6 col-lg-3">
+            <article class="crew-card h-100">
+              <!-- ✅ 카드 전체 클릭 가능 -->
+              <a href="#crew4Detail" class="stretched-link" aria-label="크루 상세보기: 새벽 러닝 & 스트레칭"></a>
+              <div class="crew-thumb">
+                <img src="image/running.PNG" alt="러닝 크루">
+                <button class="bc-like" type="button" aria-label="찜" data-like-id="crew4">
+                  <i class="bi bi-heart"></i>
+                  <i class="bi bi-heart-fill"></i>
+                </button>
+              </div>
+              <div class="crew-body">
+                <div class="crew-meta">마포구 · 스포츠</div>
+                <h3 class="crew-title">🏃 새벽 러닝 & 스트레칭</h3>
+                <div class="crew-time"><i class="bi bi-calendar-event"></i><span>25.9.7(일) 오전 6:00</span></div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ===== BEST 크루 끝 ===== -->
+
+  <!-- ===================== 커뮤니티 섹션 ===================== -->
+  <section id="community" class="community-wrap py-4">
+    <div class="container">
+      <div id="cmViewport" class="mx-auto">
+        <!-- 제목 + 탭 + 더보기 -->
+        <div class="cm-top">
+          <div class="d-flex align-items-center gap-3">
+            <div class="cm-title mb-0">커뮤니티</div>
+            <div class="cm-tabs">
+              <button type="button" class="cm-tab active" data-target="feed">후기</button>
+              <button type="button" class="cm-tab" data-target="board">자유게시판</button>
+            </div>
+          </div>
+          <a class="cm-more" href="#">더보기</a>
+        </div>
+
+        <!-- 탭 콘텐츠(세로높이 고정 래퍼) -->
+        <div id="cmContent">
+          <!-- 후기 (4카드) -->
+          <div id="cmFeed" class="tab-pane">
+            <div class="row g-3">
+              <div class="col-6 col-lg-3">
+                <article class="feed-card h-100 position-relative">
+                  <a href="/community/reviews/1" class="stretched-link" aria-label="후기 상세로 이동"></a>
+                  <div class="feed-thumb">
+                    <img src="image/hiking.jpg" alt="등산 크루 후기">
+                  </div>
+                  <div class="feed-body">
+                    <div class="feed-meta">
+                      <span>관악산 · 하이킹</span>
+                      <span class="text-warning">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+                        <span class="ms-1">4.5</span>
+                      </span>
+                    </div>
+                    <h4 class="feed-title">초보자인데도 길 안내가 좋아서 끝까지 완주!</h4>
+                    <p class="feed-text mb-2">페이스 조절을 잘 해주셔서 숨 안차고 풍경 즐기면서 다녀왔어요. 사진 포인트도 찐이었습니다.</p>
+                    <div class="feed-reviewer"><strong>이솔님의 리뷰</strong></div>
+                  </div>
+                </article>
+              </div>
+              <div class="col-6 col-lg-3">
+                <article class="feed-card h-100 position-relative">
+                  <a href="/community/reviews/2" class="stretched-link" aria-label="후기 상세로 이동"></a>
+                  <div class="feed-thumb">
+                    <img src="image/boardgame.jpg" alt="보드게임 모임 후기">
+                  </div>
+                  <div class="feed-body">
+                    <div class="feed-meta">
+                      <span>성수 · 보드게임</span>
+                      <span class="text-warning">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                        <span class="ms-1">5.0</span>
+                      </span>
+                    </div>
+                    <h4 class="feed-title">인원 매칭이 딱! 룰 설명도 친절해서 시간 순삭</h4>
+                    <p class="feed-text mb-2">처음 만난 분들이랑도 금방 친해졌어요. 운영진이 게임 선택을 잘해줘서 지루할 틈이 없었어요.</p>
+                    <div class="feed-reviewer"><strong>박지후님의 리뷰</strong></div>
+                  </div>
+                </article>
+              </div>
+              <div class="col-6 col-lg-3">
+                <article class="feed-card h-100 position-relative">
+                  <a href="/community/reviews/3" class="stretched-link" aria-label="후기 상세로 이동"></a>
+                  <div class="feed-thumb">
+                    <!-- 와인클래스: 와인 사진으로 교체 -->
+                    <img src="image/wine.jpg" alt="와인 클래스 후기">
+                  </div>
+                  <div class="feed-body">
+                    <div class="feed-meta">
+                      <span>광화문 · 와인클래스</span>
+                      <span class="text-warning">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i>
+                        <span class="ms-1">4.0</span>
+                      </span>
+                    </div>
+                    <h4 class="feed-title">기초부터 향 테이스팅까지 알차게 배웠어요</h4>
+                    <p class="feed-text mb-2">혼자 왔는데도 페어링 안주가 다양해서 재미있었습니다. 다음엔 핸드메이드 치즈 클래스도 참여하고 싶어요.</p>
+                    <div class="feed-reviewer"><strong>김수안님의 리뷰</strong></div>
+                  </div>
+                </article>
+              </div>
+              <div class="col-6 col-lg-3">
+                <article class="feed-card h-100 position-relative">
+                  <a href="/community/reviews/4" class="stretched-link" aria-label="후기 상세로 이동"></a>
+                  <div class="feed-thumb">
+                    <img src="image/dd.jpg" alt="도예 클래스 후기">
+                  </div>
+                  <div class="feed-body">
+                    <div class="feed-meta">
+                      <span>홍대 · 도예</span>
+                      <span class="text-warning">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i>
+                        <span class="ms-1">4.0</span>
+                      </span>
+                    </div>
+                    <h4 class="feed-title">처음 만든 머그컵, 굽기까지 친절하게 케어!</h4>
+                    <p class="feed-text mb-2">손에 딱 맞는 컵 완성. 선생님이 형태 잡는 팁을 잘 알려주셔서 재밌었어요.</p>
+                    <div class="feed-reviewer"><strong>정하린님의 리뷰</strong></div>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+
+          <!-- 자유게시판 (일자형 리스트 4개, 반응형 2열) -->
+          <div id="cmBoard" class="tab-pane hidden">
+<div class="board-list">
+            <div class="board-item">
+              <div class="board-thumb">
+                <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=600&auto=format&fit=crop" alt="러닝">
+              </div>
+              <div>
+                <h5 class="board-title"><a href="/community/board/101">한강 러닝 초보인데 페이스 어느 정도가 무난할까요?</a></h5>
+                <p class="board-excerpt">5km 목표인데 7'00으로 가도 될지.. 더 천천히 시작하는 게 좋을까요?</p>
+                <div class="board-meta">
+                  호빵맨 · 9분 전 · 댓글 8 · 추천 3 · 조회 0
+                  <span class="badge-photo ms-2">사진</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="board-item">
+              <div class="board-thumb">
+                <img src="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?q=80&w=600&auto=format&fit=crop" alt="보드게임">
+              </div>
+              <div>
+                <h5 class="board-title"><a href="/community/board/102">보드게임 끝나고 야식 갈 사람 (성수)</a></h5>
+                <p class="board-excerpt">라운지 근처 포장마차 어떠세요? 간단히 라멘/만두 생각 중입니다!</p>
+                <div class="board-meta">
+                  루피 · 1시간 전 · 댓글 12 · 추천 7 · 조회 0
+                  <span class="badge-photo ms-2">사진</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="board-item">
+              <div>
+                <h5 class="board-title"><a href="/community/board/103">사진 초보 장비 추천 좀요</a></h5>
+                <p class="board-excerpt">입문용 바디/단렌즈 조합으로 가성비 좋은 셋업 있을까요?</p>
+                <div class="board-meta">콩순이 · 3시간 전 · 댓글 5 · 추천 1 · 조회 0</div>
+              </div>
+            </div>
+          </div>
+<!--/cmContent-->
+      </div>
+    </div>
+  </section>
+  <!-- =================== 커뮤니티 섹션 끝 =================== -->
+
+  <!-- =================== 푸터(Instagram Box – Light) =================== -->
+  <section class="footer-wrap">
+    <div class="container">
+      <div id="ftViewport" class="footer-viewport mx-auto">
+        <footer class="footer-box" role="contentinfo">
+          <div>
+            <div class="ft-title">help</div>
+            <a href="#">FAQ</a>
+            <a href="#">Contact</a>
+          </div>
+
+          <div>
+            <div class="ft-title">News</div>
+            <a href="#">Notice</a>
+            <a href="#">Update</a>
+          </div>
+
+          <div>
+            <div class="ft-title">
+              <i class="fab fa-instagram" aria-hidden="true"></i>
+              <span>instagram</span>
+            </div>
+            <a id="igLink" href="https://instagram.com/yourbrand" target="_blank" rel="noopener">@yourbrand</a>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </section>
+  <!-- =================== 푸터 끝 =================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* ===== Tooltip/카테고리 로직 — 유지 ===== */
+  const tooltips=[];
+  document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el=>{
+    tooltips.push(new bootstrap.Tooltip(el,{placement:'bottom',fallbackPlacements:[]}));
+  });
+  const tooltipDisposeOn = el => bootstrap.Tooltip.getInstance(el)?.dispose();
+  const tooltipEnableOn  = el => { if(!bootstrap.Tooltip.getInstance(el)) new bootstrap.Tooltip(el,{placement:'bottom',fallbackPlacements:[]}); };
+
+  const categories=[
+    {title:'아웃도어',emoji:'🏕️'},{title:'피트니스',emoji:'🧘'},{title:'뷰티',emoji:'💄'},{title:'공예·DIY',emoji:'🧶'},
+    {title:'스포츠',emoji:'⚽'},{title:'베이킹',emoji:'🍞'},{title:'문화예술',emoji:'🎨'},{title:'자기계발',emoji:'📚'},
+    {title:'심리·상담',emoji:'☕'},{title:'수상레포츠',emoji:'🏊'},{title:'요리',emoji:'🍳'},{title:'여행',emoji:'✈️'}
+  ];
+  const gridDesk=document.getElementById('gridDesk');
+  const gridM=document.getElementById('gridM');
+  function renderChips(container){
+    container.innerHTML = categories.map(c=>(
+      '<button type="button" class="cat-chip" data-title="'+c.title+'">'+
+        '<div class="chip-badge">'+c.emoji+'</div>'+
+        '<div class="cat-title">'+c.title+'</div>'+
+      '</button>'
+    )).join('');
+  }
+  renderChips(gridDesk); renderChips(gridM);
+
+  function setUnifiedChipWidth(scope=document){
+    const chips=[...scope.querySelectorAll('.cat-chip')]; if(!chips.length) return;
+    chips.forEach(ch=>ch.style.width='auto');
+    const maxW=Math.ceil(Math.max(...chips.map(ch=>ch.scrollWidth)));
+    const clamped=Math.min(Math.max(maxW,120),200);
+    document.documentElement.style.setProperty('--chip-col-w',clamped+'px');
+    chips.forEach(ch=>ch.style.width='100%');
+  }
+  const recalcAll=()=>setUnifiedChipWidth(document);
+  recalcAll(); addEventListener('resize',recalcAll);
+  if(document.fonts?.ready) document.fonts.ready.then(recalcAll);
+
+  const btnCatDesk=document.getElementById('btnCatDesk');
+  const panelDesk=document.getElementById('panelDesk');
+  function keepPanelOnScreen(panel){
+    panel.style.left='50%'; panel.style.right='';
+    panel.style.transform='translateX(-50%)';
+    const prev=panel.style.display; panel.style.display='block';
+    const rect=panel.getBoundingClientRect(); const vw=innerWidth; const m=16;
+    if(rect.left<m){ panel.style.left=m+'px'; panel.style.right=''; panel.style.transform='none'; }
+    else if(rect.right>vw-m){ panel.style.left=''; panel.style.right=m+'px'; panel.style.transform='none'; }
+    panel.style.display=prev||'block';
+  }
+  btnCatDesk?.addEventListener('click',()=>{
+    const open=panelDesk.style.display==='block';
+    if(!open){ panelDesk.style.display='block'; keepPanelOnScreen(panelDesk); tooltipDisposeOn(btnCatDesk); }
+    else{ panelDesk.style.display='none'; tooltipEnableOn(btnCatDesk); }
+    btnCatDesk.setAttribute('aria-expanded',String(!open));
+  });
+  document.addEventListener('click',e=>{
+    if(panelDesk.style.display==='block'&&!panelDesk.contains(e.target)&&!btnCatDesk.contains(e.target)){
+      panelDesk.style.display='none'; btnCatDesk.setAttribute('aria-expanded','false'); tooltipEnableOn(btnCatDesk);
+    }
+  });
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){ panelDesk.style.display='none'; btnCatDesk.setAttribute('aria-expanded','false'); closeMobilePanel?.(); tooltipEnableOn(btnCatDesk); }
+  });
+
+  const btnCatM=document.getElementById('btnCatM');
+  const panelM=document.getElementById('panelM');
+  function openMobilePanel(){ panelM.style.display='block'; btnCatM.setAttribute('aria-expanded','true'); setUnifiedChipWidth(panelM); tooltipDisposeOn(btnCatM); }
+  function closeMobilePanel(){ panelM.style.display='none'; btnCatM.setAttribute('aria-expanded','false'); tooltipEnableOn(btnCatM); }
+  function panelMHidden(){ return panelM.style.display!=='block'; }
+  btnCatM?.addEventListener('click',e=>{ e.preventDefault(); panelMHidden()?openMobilePanel():closeMobilePanel(); });
+  document.addEventListener('click',e=>{
+    const isInside=panelM.contains(e.target)||btnCatM.contains(e.target);
+    if(!isInside&&!panelMHidden()) closeMobilePanel();
+  });
+  document.addEventListener('click',e=>{
+    const chip=e.target.closest('.cat-chip'); if(!chip) return;
+    if(!panelMHidden()) closeMobilePanel();
+  });
+
+  /* ====== 배너/섹션/푸터 정렬/폭 로직 ====== */
+  function positionArrows(){
+    const viewport = document.querySelector('.carousel-viewport');
+    const prevBtn = document.getElementById('ctrlPrev');
+    const nextBtn = document.getElementById('ctrlNext');
+    const activeImg = document.querySelector('#heroCarousel .carousel-item.active .banner-img');
+    if(!viewport || !prevBtn || !nextBtn || !activeImg) return;
+
+    const vpRect = viewport.getBoundingClientRect();
+    const imgRect = activeImg.getBoundingClientRect();
+
+    const pad = 8;
+    const leftOffset  = Math.max(0, imgRect.left - vpRect.left + pad);
+    const rightOffset = Math.max(0, vpRect.right - imgRect.right + pad);
+
+    prevBtn.style.left  = leftOffset + 'px';
+    prevBtn.style.right = 'auto';
+    nextBtn.style.right = rightOffset + 'px';
+    nextBtn.style.left  = 'auto';
+  }
+
+  function navSpanWidth(){
+    const catWrap  = document.querySelector('.bar-lg .category-trigger');
+    const iconRow  = document.querySelector('.bar-lg .icon-row');
+    if(!catWrap || !iconRow) return null;
+    const leftEdge = catWrap.getBoundingClientRect().left;
+    const rightEdge= iconRow.getBoundingClientRect().right;
+    return Math.max(0, rightEdge - leftEdge);
+  }
+
+  /* 배너 폭을 네비 아이콘 끝~끝(span)에 맞춤 */
+  function syncBannerToIcons(){
+    const viewport = document.querySelector('.carousel-viewport');
+    if(!viewport) return;
+    if (window.innerWidth >= 992) {
+      const span = navSpanWidth();
+      if(span!=null){
+        viewport.style.width = span + 'px';
+        viewport.style.marginLeft = 'auto';
+        viewport.style.marginRight = 'auto';
+      }
+    } else {
+      viewport.style.width = '';
+      viewport.style.marginLeft = '';
+      viewport.style.marginRight = '';
+    }
+    positionArrows();
+  }
+
+  function syncBestCrewToIcons(){
+    const bc = document.getElementById('bcViewport');
+    if(!bc) return;
+    if (window.innerWidth >= 992) {
+      const span = navSpanWidth();
+      if(span!=null){
+        bc.style.width = span + 'px';
+        bc.style.marginLeft = 'auto';
+        bc.style.marginRight = 'auto';
+      }
+    } else {
+      bc.style.width = '';
+      bc.style.marginLeft = '';
+      bc.style.marginRight = '';
+    }
+  }
+
+  function syncCommunityToIcons(){
+    const cm = document.getElementById('cmViewport');
+    if(!cm) return;
+    if (window.innerWidth >= 992) {
+      const span = navSpanWidth();
+      if(span!=null){
+        cm.style.width = span + 'px';
+        cm.style.marginLeft = 'auto';
+        cm.style.marginRight = 'auto';
+      }
+    } else {
+      cm.style.width = '';
+      cm.style.marginLeft = '';
+      cm.style.marginRight = '';
+    }
+  }
+
+  /* 푸터도 네비 끝~끝에 맞춤 */
+  function syncFooterToIcons(){
+    const ft = document.getElementById('ftViewport');
+    if(!ft) return;
+    if (window.innerWidth >= 992) {
+      const span = navSpanWidth();
+      if(span!=null){
+        ft.style.width = span + 'px';
+        ft.style.marginLeft = 'auto';
+        ft.style.marginRight = 'auto';
+      }
+    } else {
+      ft.style.width = '';
+      ft.style.marginLeft = '';
+      ft.style.marginRight = '';
+    }
+  }
+
+  function bindImgLoadHandlers(){
+    document.querySelectorAll('.banner-img').forEach(img=>{
+      if(!img.complete){
+        img.addEventListener('load', ()=>{ syncBannerToIcons(); positionArrows(); }, { once:true });
+      }
+    });
+  }
+  bindImgLoadHandlers();
+
+  window.addEventListener('load', ()=>{
+    syncBannerToIcons();
+    positionArrows();
+    syncBestCrewToIcons();
+    syncCommunityToIcons();
+    syncFooterToIcons();
+  });
+  window.addEventListener('resize', ()=>{
+    syncBannerToIcons();
+    positionArrows();
+    syncBestCrewToIcons();
+    syncCommunityToIcons();
+    syncFooterToIcons();
+  });
+
+  const hero = document.getElementById('heroCarousel');
+  hero.addEventListener('slid.bs.carousel', () => {
+    bindImgLoadHandlers();
+    syncBannerToIcons();
+  });
+
+  if(document.fonts?.ready){
+    document.fonts.ready.then(()=>{
+      syncBannerToIcons();
+      syncBestCrewToIcons();
+      syncCommunityToIcons();
+      syncFooterToIcons();
+    });
+  }
+
+  /* ===== BEST 크루 찜 토글 ===== */
+  (function(){
+    const KEY = 'bc_like_states';
+    function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ return {}; } }
+    function save(obj){ try{ localStorage.setItem(KEY, JSON.stringify(obj)); }catch(e){} }
+    const state = load();
+
+    // 초기 상태 복원
+    document.querySelectorAll('.bc-like[data-like-id]').forEach(btn=>{
+      const id = btn.getAttribute('data-like-id');
+      if(state[id]) btn.classList.add('active');
+      btn.setAttribute('aria-pressed', btn.classList.contains('active') ? 'true' : 'false');
+      btn.setAttribute('title', '찜');
+    });
+
+    // 클릭 토글
+    document.addEventListener('click', (e)=>{
+      const likeBtn = e.target.closest('.bc-like');
+      if(!likeBtn) return;
+      e.preventDefault(); e.stopPropagation();
+      likeBtn.classList.toggle('active');
+      const id = likeBtn.getAttribute('data-like-id') || Math.random().toString(36).slice(2);
+      likeBtn.setAttribute('data-like-id', id);
+      state[id] = likeBtn.classList.contains('active');
+      likeBtn.setAttribute('aria-pressed', state[id] ? 'true' : 'false');
+      save(state);
+    });
+  })();
+
+  /* ===== 커뮤니티 탭 전환 ===== */
+  const cmContent = document.getElementById('cmContent');
+  const panes = {
+    feed: document.getElementById('cmFeed'),
+    board: document.getElementById('cmBoard')
+  };
+  function measureMaxPaneHeight(){
+    const h1 = panes.feed.getBoundingClientRect().height;
+    const h2 = panes.board.getBoundingClientRect().height;
+    cmContent.style.minHeight = Math.max(h1, h2) + 'px';
+  }
+  function showPane(name){
+    Object.entries(panes).forEach(([key,el])=>{
+      el.classList.toggle('hidden', key!==name);
+    });
+    document.querySelectorAll('.cm-tab').forEach(btn=>{
+      btn.classList.toggle('active', btn.dataset.target===name);
+    });
+  }
+  document.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.cm-tab'); if(!btn) return;
+    showPane(btn.dataset.target);
+  });
+  // 초기화
+  window.addEventListener('load', ()=>{
+    panes.board.classList.remove('hidden');
+    requestAnimationFrame(()=>{
+      measureMaxPaneHeight();
+      showPane('feed'); // 기본: 후기
+    });
+  });
+  window.addEventListener('resize', measureMaxPaneHeight);
+
+  /* ===== 인스타 링크 핸들 ===== */
+  const IG_HANDLE = 'yourbrand';
+  const igLink = document.getElementById('igLink');
+  if (igLink){
+    igLink.href = `https://instagram.com/${IG_HANDLE}`;
+    igLink.textContent = `@${IG_HANDLE}`;
+  }
+
+  /* ===== 검색 오버레이 로직 + 자동완성 차단 (데스크톱) ===== */
+  (function(){
+    const input = document.getElementById('globalSearch');
+    const overlay = document.getElementById('searchOverlay');
+    const popularEl = document.getElementById('popularChips');
+    const recentEl = document.getElementById('recentChips');
+    const clearRecentBtn = document.getElementById('clearRecent');
+    if(!input || !overlay) return;
+
+    // 크롬/엣지 자동완성 억제
+    function suppressBrowserSuggestions(el){
+      el.setAttribute('autocomplete','off');
+      el.setAttribute('readonly','readonly');
+      setTimeout(()=>{ el.removeAttribute('readonly'); }, 50);
+    }
+
+    // 샘플 인기 검색어
+    const popular = ['하이킹','보드게임','드로잉','와인클래스','홈쿠킹','사진산책','러닝'];
+    const LS_KEY = 'hobby_recent_keywords';
+
+    const getRecent = () => {
+      try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch { return []; }
+    };
+    const setRecent = (arr) => localStorage.setItem(LS_KEY, JSON.stringify(arr.slice(0,12)));
+
+    function renderChips(list, container, {deletable=false}={}){
+      container.innerHTML = '';
+      list.forEach((word, idx)=>{
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'so-chip';
+        chip.setAttribute('data-word', word);
+        chip.innerHTML = `<span class="txt">${word}</span>` + (deletable? `<span class="del" data-index="${idx}" aria-label="삭제">×</span>`:'');
+        container.appendChild(chip);
+      });
+    }
+
+    function openOverlay(){
+      overlay.setAttribute('aria-hidden','false');
+      const wrap = input.closest('.search-wrap') || input.parentElement;
+      if (wrap) {
+        const rect = wrap.getBoundingClientRect();
+        overlay.style.width = rect.width + 'px';
+      }
+    }
+    function closeOverlay(){
+      overlay.setAttribute('aria-hidden','true');
+      overlay.querySelectorAll('.kb-focus').forEach(el=>el.classList.remove('kb-focus'));
+    }
+
+    // 초기 렌더
+    renderChips(popular, popularEl, {deletable:false});
+    renderChips(getRecent(), recentEl, {deletable:true});
+
+    // input 포커스/입력 → 오버레이 열기 + 자동완성 억제
+    input.addEventListener('focus', ()=>{
+      suppressBrowserSuggestions(input);
+      openOverlay();
+    });
+    input.addEventListener('input', openOverlay);
+
+    // 바깥 클릭 → 닫기
+    document.addEventListener('click', (e)=>{
+      if (overlay.contains(e.target) || input.contains(e.target)) return;
+      closeOverlay();
+    });
+
+    // ESC → 닫기
+    document.addEventListener('keydown', (e)=>{
+      if (e.key === 'Escape') closeOverlay();
+    });
+
+    // 칩 클릭(인기/최근)
+    overlay.addEventListener('click', (e)=>{
+      const del = e.target.closest('.del');
+      if (del){ // 최근 개별 삭제
+        const idx = Number(del.dataset.index);
+        const arr = getRecent();
+        arr.splice(idx,1);
+        setRecent(arr);
+        renderChips(arr, recentEl, {deletable:true});
+        return;
+      }
+      const chip = e.target.closest('.so-chip');
+      if (!chip) return;
+      const word = chip.dataset.word || chip.querySelector('.txt')?.textContent || '';
+      if (!word) return;
+
+      // (요청) 클릭해도 active 표시(색 변경) 없음
+      input.value = word;
+
+      // 최근 저장(중복 제거 후 선두)
+      const arr = getRecent().filter(v=>v!==word);
+      arr.unshift(word);
+      setRecent(arr);
+      renderChips(arr, recentEl, {deletable:true});
+
+      // 실제 검색 실행 위치(라우팅 연결 지점)
+      // location.href = `/search.html?q=${encodeURIComponent(word)}`;
+      closeOverlay();
+    });
+
+    // 입력 후 엔터 → 검색 + 최근 저장
+    input.addEventListener('keydown', (e)=>{
+      if (e.key === 'Enter'){
+        const word = (input.value || '').trim();
+        if (!word) return;
+        const arr = getRecent().filter(v=>v!==word);
+        arr.unshift(word);
+        setRecent(arr);
+        renderChips(arr, recentEl, {deletable:true});
+        // 실제 검색 실행
+        // location.href = `/search.html?q=${encodeURIComponent(word)}`;
+        closeOverlay();
+      }
+      // 방향키로 칩 키보드 포커스 이동
+      if (['ArrowDown','ArrowUp'].includes(e.key)){
+        const focusables = overlay.querySelectorAll('.so-chip');
+        if (!focusables.length) return;
+        e.preventDefault();
+        const first = focusables[0];
+        focusables.forEach(el=>el.classList.remove('kb-focus'));
+        first.classList.add('kb-focus');
+        first.scrollIntoView({block:'nearest', inline:'nearest'});
+      }
+    });
+
+    // 오버레이 내부 키보드 포커스 이동/선택
+    overlay.addEventListener('keydown', (e)=>{
+      const chips = [...overlay.querySelectorAll('.so-chip')];
+      if (!chips.length) return;
+      const current = overlay.querySelector('.so-chip.kb-focus');
+      const idx = chips.indexOf(current);
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight'){
+        e.preventDefault();
+        const next = chips[(idx+1+chips.length)%chips.length];
+        chips.forEach(el=>el.classList.remove('kb-focus'));
+        next.classList.add('kb-focus');
+        next.scrollIntoView({block:'nearest', inline:'nearest'});
+      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft'){
+        e.preventDefault();
+        const prev = chips[(idx-1+chips.length)%chips.length];
+        chips.forEach(el=>el.classList.remove('kb-focus'));
+        prev.classList.add('kb-focus');
+        prev.scrollIntoView({block:'nearest', inline:'nearest'});
+      } else if (e.key === 'Enter'){
+        e.preventDefault();
+        current?.click();
+      }
+    });
+
+    // 최근 전체 삭제
+    clearRecentBtn?.addEventListener('click', ()=>{
+      setRecent([]);
+      renderChips([], recentEl, {deletable:true});
+    });
+  })();
+
+  /* ===== 모바일 검색 입력도 자동완성 억제 ===== */
+  (function(){
+    const sm = document.getElementById('globalSearchSm');
+    if(!sm) return;
+    function suppress(el){
+      el.setAttribute('autocomplete','off');
+      el.setAttribute('readonly','readonly');
+      setTimeout(()=>{ el.removeAttribute('readonly'); }, 50);
+    }
+    sm.addEventListener('focus', ()=> suppress(sm));
+  })();
+
+</script>
+
+<script>
+// 커뮤니티 더보기 → 현재 활성 탭에 맞는 URL로 이동
+(function(){
+  const more = document.querySelector('a.cm-more');
+  if(!more) return;
+
+  function currentTabParam(){
+    const active = document.querySelector('.cm-tab.active');
+    if (!active) return 'reviews';
+    const target = active.getAttribute('data-target');
+    return (target === 'board') ? 'board' : 'reviews';
+  }
+
+  // 클릭 시 현재 활성 탭 기준으로 이동
+  more.addEventListener('click', function(e){
+    e.preventDefault();
+    const tab = currentTabParam();
+    location.href = '/community/?tab=' + tab;
+  });
+
+  // (선택) 접근성: 링크에 현재 목적지를 미리 반영
+  function updateHref(){
+    more.setAttribute('href', '/community/?tab=' + currentTabParam());
+  }
+  updateHref();
+  document.addEventListener('click', function(e){
+    if(e.target.closest('.cm-tab')){
+      // 탭 토글 로직이 먼저 실행된 다음 한 틱 뒤에 반영
+      setTimeout(updateHref, 0);
+    }
+  });
+})();
+</script>
+
+
+<script>
+// 커뮤니티 탭: 클릭 시 색상(active) 토글 + 콘텐츠 전환 (URL 이동 없음)
+(function(){
+  const tabs = document.querySelectorAll('.cm-tab');
+  const feed = document.getElementById('cmFeed');
+  const board = document.getElementById('cmBoard');
+  if(!tabs.length || !feed || !board) return;
+
+  function show(name){
+    // toggle panes
+    feed.classList.toggle('hidden', name!=='feed');
+    board.classList.toggle('hidden', name!=='board');
+    // toggle active styles
+    document.querySelectorAll('.cm-tab').forEach(btn=>{
+      btn.classList.toggle('active', btn.dataset.target === name);
+      btn.setAttribute('aria-selected', btn.dataset.target === name ? 'true' : 'false');
+    });
+    // sync "더보기" href (if helper not present, we set directly)
+    const more = document.querySelector('a.cm-more');
+    if(more){
+      const tab = (name==='board') ? 'board' : 'reviews';
+      more.setAttribute('href', '/community/?tab=' + tab);
+    }
+  }
+
+  // initialize aria
+  tabs.forEach(btn=>{
+    if(!btn.hasAttribute('role')) btn.setAttribute('role','tab');
+    if(!btn.hasAttribute('aria-controls')){
+      const tgt = btn.dataset.target==='board' ? 'cmBoard' : 'cmFeed';
+      btn.setAttribute('aria-controls', tgt);
+    }
+  });
+
+  document.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.cm-tab');
+    if(!btn) return;
+    e.preventDefault();
+    const name = btn.dataset.target || 'feed';
+    show(name);
+  });
+
+  // initial: ensure one active
+  const current = document.querySelector('.cm-tab.active') || tabs[0];
+  show(current?.dataset.target || 'feed');
+})();
+</script>
+
+</body>
+</html>
